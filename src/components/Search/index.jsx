@@ -8,7 +8,8 @@ const Search = () => {
     <input
       type='text'
       placeholder='Search products...'
-      className='w-full h-[35px] focus:outline-none bg-inherit p-2 text-[15px]'
+      className='w-full h-[35px] focus:outline-none bg-inherit p-2 text-[15px] bg-'
+
     />
   </div>
 </div>
