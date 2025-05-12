@@ -1,25 +1,14 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-
-*{margin:0px; padding: 0px; box-sizing: border-box;}
-
-
-
-
-body{
-    font-family: "Montserrat", sans-serif;
+body {
+  font-family: "Montserrat", sans-serif;
   font-optical-sizing: auto;
 }
 .container {
-    width: 90%; margin: auto;
-  }
+  width: 90%;
+  margin: auto;
+}
 
-  header.top-strip{}
-
-
- 
-  .link:hover{color: #624c4c;}
-
-  
+.link:hover {
+  color: #624c4c;
+}
