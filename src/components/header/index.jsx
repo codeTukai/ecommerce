@@ -68,12 +68,12 @@ const Header = () => {
                 placeholder='Search products...'
                 className='w-full px-4 py-2 border border-gray-300 rounded-l-md'
               />
-              <button
+              {/* <button
                 onClick={handleSearch}
                 className='px-4 py-2 bg-blue-600 text-white rounded-r-md hover:bg-blue-700 transition'
               >
                 Search
-              </button>
+              </button> */}
             </div>
           </div>
 
