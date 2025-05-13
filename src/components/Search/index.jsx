@@ -1,6 +1,5 @@
 import React from 'react';
-import '../Search/style.css'; // ✅ correct relative path
-import Button from '@mui/material/Button';
+import '../Search/style.css';
 import { IoSearch } from 'react-icons/io5';
 
 const Search = () => {
@@ -13,12 +12,11 @@ const Search = () => {
           className="w-full h-[45px] pl-4 pr-12 rounded-[5px] bg-[#e5e5e5] text-[15px] outline-none"
         />
 
-        <Button
-          variant="contained"
-          className="!min-w-0 !p-0 w-[40px] h-[40px] rounded-full absolute top-1 right-1 flex items-center justify-center"
+        <button
+          className="absolute top-[4px] right-[4px] w-[37px] h-[37px] rounded-full bg-white text-black flex items-center justify-center shadow"
         >
           <IoSearch size={20} />
-        </Button>
+        </button>
       </div>
     </div>
   );
