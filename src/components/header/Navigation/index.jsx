@@ -50,127 +50,90 @@ const Navigation = () => {
                   </Button>
                 </Link>
               </li>
-              <li className="list-none relative group">
+              <li className="list-none relative nav">
                 <Link to="/" className="link transition text-[14px] font-[500]">
-                  <Button className="link transition !font-[400] !text-[rgba(0,0,0,0.5)] hover:!text-[#ff5252]">
+                  <Button className="link transition !font-[500] !text-[rgba(0,0,0,0.5)] hover:!text-[#ff5252]">
                     Fashion
                   </Button>
                 </Link>
 
-                {/* Parent Submenu */}
-                <div className="submenu absolute top-[120%] left-0 min-w-[200px] bg-white shadow-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-20">
-                  <ul>
-                    {/* Men Submenu */}
-                    <li className="list-none relative group w-full">
-                      <Button className="!text-[rgba(0,0,0,0.8)] w-full !text-left !justify-start !rounded-none hover:!text-[#ff5252]">
-                        Men
-                      </Button>
-                      <div className="absolute top-0 left-full min-w-[200px] bg-white shadow-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-30">
-                        <ul>
-                          {[
-                            "T-Shirts",
-                            "Shirts",
-                            "Jeans",
-                            "Shoes",
-                            "Watches",
-                            "Bags",
-                          ].map((product, idx) => (
-                            <li key={idx} className="list-none w-full">
-                              <Button className="!text-[rgba(0,0,0,0.8)] w-full !text-left !justify-start !rounded-none hover:!text-[#ff5252]">
-                                {product}
-                              </Button>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </li>
+                <div className="submenu absolute top-[120%] left-[0%] min-w-[150px] bg-white shadow-md opacity-0 transition-all">
+                
+                <ul>
 
-                    {/* Women Submenu */}
-                    <li className="list-none relative group w-full">
-                      <Button className="!text-[rgba(0,0,0,0.8)] w-full !text-left !justify-start !rounded-none hover:!text-[#ff5252]">
-                        Women
-                      </Button>
-                      <div className="absolute top-0 left-full min-w-[200px] bg-white shadow-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-30">
-                        <ul>
-                          {[
-                            "Kurtas",
-                            "Tops",
-                            "Sarees",
-                            "Shoes",
-                            "Handbags",
-                            "Jewellery",
-                          ].map((product, idx) => (
-                            <li key={idx} className="list-none w-full">
-                              <Button className="!text-[rgba(0,0,0,0.8)] w-full !text-left !justify-start !rounded-none hover:!text-[#ff5252]">
-                                {product}
-                              </Button>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </li>
+                  <li className="list-none w-full relative">
+                    <Link to="/" className="w-full">
+                        <Button className="!text-[rgba(0,0,0,0.8)] w-full !text-left !justify-start !rounded-none">Men</Button>
+                        <div className="submenu absolute top-[0%] left-[100%] min-w-[200px] bg-white shadow-md opacity-0 transition-all">
+                
+                <ul>
 
-                    {/* Kids Submenu */}
-                    <li className="list-none relative group w-full">
-                      <Button className="!text-[rgba(0,0,0,0.8)] w-full !text-left !justify-start !rounded-none hover:!text-[#ff5252]">
-                        Kids
-                      </Button>
-                      <div className="absolute top-0 left-full min-w-[200px] bg-white shadow-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-30">
-                        <ul>
-                          {["T-Shirts", "Shorts", "Sandals", "Caps"].map(
-                            (product, idx) => (
-                              <li key={idx} className="list-none w-full">
-                                <Button className="!text-[rgba(0,0,0,0.8)] w-full !text-left !justify-start !rounded-none hover:!text-[#ff5252]">
-                                  {product}
-                                </Button>
-                              </li>
-                            )
-                          )}
-                        </ul>
-                      </div>
-                    </li>
-
-                    {/* Girls Submenu */}
-                    <li className="list-none relative group w-full">
-                      <Button className="!text-[rgba(0,0,0,0.8)] w-full !text-left !justify-start !rounded-none hover:!text-[#ff5252]">
-                        Girls
-                      </Button>
-                      <div className="absolute top-0 left-full min-w-[200px] bg-white shadow-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-30">
-                        <ul>
-                          {["Dresses", "Leggings", "Hairbands", "Bags"].map(
-                            (product, idx) => (
-                              <li key={idx} className="list-none w-full">
-                                <Button className="!text-[rgba(0,0,0,0.8)] w-full !text-left !justify-start !rounded-none hover:!text-[#ff5252]">
-                                  {product}
-                                </Button>
-                              </li>
-                            )
-                          )}
-                        </ul>
-                      </div>
-                    </li>
-
-                    {/* Boys Submenu */}
-                    <li className="list-none relative group w-full">
-                      <Button className="!text-[rgba(0,0,0,0.8)] w-full !text-left !justify-start !rounded-none hover:!text-[#ff5252]">
-                        Boys
-                      </Button>
-                      <div className="absolute top-0 left-full min-w-[200px] bg-white shadow-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-30">
-                        <ul>
-                          {["Pants", "Shirts", "Sneakers", "Caps"].map(
-                            (product, idx) => (
-                              <li key={idx} className="list-none w-full">
-                                <Button className="!text-[rgba(0,0,0,0.8)] w-full !text-left !justify-start !rounded-none hover:!text-[#ff5252]">
-                                  {product}
-                                </Button>
-                              </li>
-                            )
-                          )}
-                        </ul>
-                      </div>
-                    </li>
-                  </ul>
+                  <li className="list-none w-full">
+                    <Link to="/" className="w-full">
+                        <Button className="!text-[rgba(0,0,0,0.8)] w-full !text-left !justify-start !rounded-none">T-Shirt</Button>
+                        </Link>
+                  </li>
+                  <li className="list-none w-full">
+                    <Link to="/" className="w-full">
+                        <Button className="!text-[rgba(0,0,0,0.8)] w-full !text-left !justify-start !rounded-none" >Jinse</Button>
+                        </Link>
+                  </li>
+                  <li className="list-none w-full">
+                    <Link to="/" className="w-full">
+                        <Button className="!text-[rgba(0,0,0,0.8)] w-full !text-left !justify-start !rounded-none">Pant</Button>
+                        </Link>
+                  </li>
+                  <li className="list-none w-full">
+                    <Link to="/" className="w-full">
+                        <Button className="!text-[rgba(0,0,0,0.8)] w-full !text-left !justify-start !rounded-none">Watches</Button>
+                        </Link>
+                  </li>
+                  <li className="list-none w-full">
+                    <Link to="/" className="w-full">
+                        <Button className="!text-[rgba(0,0,0,0.8)] w-full !text-left !justify-start !rounded-none ">Shoes</Button>
+                        </Link> 
+                  </li>
+                </ul>
+                
+                
                 </div>
+
+
+
+
+
+
+
+
+
+                        </Link>
+                  </li>
+                  <li className="list-none w-full">
+                    <Link to="/" className="w-full">
+                        <Button className="!text-[rgba(0,0,0,0.8)] w-full !text-left !justify-start !rounded-none" >Women</Button>
+                        </Link>
+                  </li>
+                  <li className="list-none w-full">
+                    <Link to="/" className="w-full">
+                        <Button className="!text-[rgba(0,0,0,0.8)] w-full !text-left !justify-start !rounded-none">Kids</Button>
+                        </Link>
+                  </li>
+                  <li className="list-none w-full">
+                    <Link to="/" className="w-full">
+                        <Button className="!text-[rgba(0,0,0,0.8)] w-full !text-left !justify-start !rounded-none">Girls</Button>
+                        </Link>
+                  </li>
+                  <li className="list-none w-full">
+                    <Link to="/" className="w-full">
+                        <Button className="!text-[rgba(0,0,0,0.8)] w-full !text-left !justify-start !rounded-none ">Boys</Button>
+                        </Link> 
+                  </li>
+                </ul>
+                
+                
+                </div>
+
+
               </li>
 
               <li className="list-none">

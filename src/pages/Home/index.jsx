@@ -1,10 +1,15 @@
 import React from 'react'
 import Header from '../../components/header'
+import HomeSlider from '../../components/HomeSlider';
 
 const Home = () => {
     return (
-      <div>Home</div>  
+      <>
+      <HomeSlider/>
+      
+      
+      </> 
     )
 }
 
-export default Home
+export default Home;
