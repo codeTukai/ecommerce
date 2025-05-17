@@ -1,1 +1,26 @@
-.searchBox input::placeholder{color: #1f1f1f !important;}
+.categoryPanel button{text-transform: capitalize !important;}
+
+.nav li .submenu {
+    
+    visibility: hidden;
+   
+    
+    
+  }
+  
+  .nav li:hover .submenu {
+    opacity: 1;
+    visibility: inherit;
+    top: 100%;
+  }
+  .nav li:hover .submenu {
+   color:#ff5252
+   !important;
+  }
+  .nav li:hover .submenu {
+    opacity: 1;
+    visibility: inherit;
+    top: 100%;
+  }
+  
+  
