@@ -1,6 +1,6 @@
 .categoryPanel button{text-transform: capitalize !important;}
 
-.nav li .submenu {visibility: hidden;z-index: 1000;}
+.nav li .submenu {visibility: hidden; z-index: 1000;}
 .nav li .submenu button{font-weight: 400 !important;}
 .nav li:hover .submenu{opacity: 1 !important; visibility: inherit; top: 100%;}
 .nav li .submenu li:hover button{color: #ff5252 !important;}

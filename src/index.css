@@ -22,3 +22,12 @@ nav ul button{text-transform: capitalize !important;}
 nav ul button:hover{background: none !important;}
 
 .categoryPanel button{text-transform: capitalize !important;}
+
+
+.sliderHome{overflow: inherit !important;}
+
+.swiper-button-prev, .swiper-button-next{display: flex; align-items: center; justify-content: center; background: #fff; border-radius: 100%;width: 45px; min-width: 45px;
+box-shadow: 0 1px 3px #0000001f, 0 1px 2px #0000003d !important;
+}
+
+.swiper-button-prev::after, .swiper-button-next::after{font-size: 22px !important; color: #000;}

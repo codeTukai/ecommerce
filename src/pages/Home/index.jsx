@@ -1,11 +1,12 @@
 import React from 'react'
-import Header from '../../components/header'
 import HomeSlider from '../../components/HomeSlider';
+import HomeCatSlider from '../../components/HomecatSlider';
 
 const Home = () => {
     return (
       <>
       <HomeSlider/>
+      <HomeCatSlider/>
       
       
       </> 
