@@ -12,7 +12,7 @@ const CategoryPanel = (props) => {
   const [innerSubmenuIndex, setInnerSubmenuIndex] = useState(null);
 
   const toggleDrawer = (newOpen) => () => {
-    props.setIsOpenCatPanel(newOpen);
+    props.openCategoryPanel(newOpen);
   };
 
   const openSubmenu = (index) => {
@@ -25,9 +25,9 @@ const CategoryPanel = (props) => {
   const DrawerList = (
     <Box sx={{ width: 250 }} role="presentation" className="categoryPanel">
       <h3 className="p-2 text-[16px] font-[500] flex items-center justify-between">
-        Shop BY Category
+        Shop BY Category{" "}
         <IoCloseSharp
-          onClick={() => toggleDrawer(false)()}
+          onClick={toggleDrawer(false)}
           className="cursor-pointer text-[20px]"
         />
       </h3>
