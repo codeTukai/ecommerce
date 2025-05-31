@@ -14,7 +14,7 @@ const HomeSlider = () => {
             delay: 2500,
             disableOnInteraction: false,
           }}
-          navigation
+          navigation={true}
           spaceBetween={10}
           slidesPerView={1}
           loop={true}

@@ -2,28 +2,30 @@ import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
-
 import { Navigation } from "swiper/modules";
-import ProductItem from "../Productitem";
 
-const ProductSLider = (props) => {
+import ProductItem from "../ProductItem";
+
+const ProductSlider = ({ items = 5 }) => {
+  const slides = Array.from({ length: items });
+
   return (
     <div className="ProductSlider py-3">
       <Swiper
-        slidesPerView={props.items}
-        spaceBetween={10}
+        slidesPerView={items}
+        spaceBetween={16}
+        navigation
         modules={[Navigation]}
-        navigation={true}
         className="mySwiper"
       >
-        <SwiperSlide>
-
-         <ProductItem/>
-
-        </SwiperSlide>
+        {slides.map((_, index) => (
+          <SwiperSlide key={`product-slide-${index}`}>
+            <ProductItem />
+          </SwiperSlide>
+        ))}
       </Swiper>
     </div>
   );
 };
 
-export default ProductSLider;
+export default ProductSlider;

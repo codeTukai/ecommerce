@@ -8,6 +8,12 @@ body {
 }
 
 
+p{font-size: 14px; line-height: 25pxx; margin-bottom: 10px;}
+
+h1,h2,h3,h4,h5,h6{font-weight: 600;}
+
+
+
 ::-webkit-scrollbar{width: 8px !important; height: 8px !important;}
 ::-webkit-scrollbar-thumb{background-color: #dbaeae;}
 ::-webkit-scrollbar-track{background-color: #fff;}
@@ -22,11 +28,16 @@ body {
   margin: auto;
 }
 
+
+
+.btn-org{background: #ff5252 !important; color: #fff !important; font-weight: 500; font-size: 14px;}
+.btn-org:hover{background: #171717 !important;}
+
+.btn-lg{font-size: 18px; padding: 10px 20px !important;}
+
 .link:hover {
   color: #ff5252 !important;
 }
-
-
 
 
 
@@ -84,4 +95,59 @@ box-shadow: 0 1px 3px #0000001f, 0 1px 2px #0000003d !important;
 .muiTabs-textColorPrimary.mui-selected{color: #ff5252 !important;}
 
 
+.productSlider .swiper-wrapper{padding: 15px; margin-left: -15px; margin-right: -15px;}
 
+/* homeslider */
+/* homeslider */
+/* homeslider */
+/* homeslider */
+/* homeslider */
+/* homeslider */
+/* homeslider */
+/* homeslider */
+/* homeslider */
+/* homeslider */
+/* homeslider */
+
+.MuiCheckbox-root{padding: 6px !important;}
+
+.ReactCollapse--collapse {
+  transition: height 400ms;
+}
+
+.itemViewActions button.active svg{color: #ff5252 !important; opacity: 1;}
+.Mui-selectedMuiPaginationItem-page{background: #ff5252 !important; color: #fff !important;}
+
+.shadow-md,.shadow-lg{box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24) !important;}
+
+
+
+.zoomProductSliderThumbs .swiper-wrapper{padding-top: 38px !important;}
+.zoomProductSliderThumbs .swiper-button-next{bottom: 0px !important; right: inherit !important; top:inherit !important; width: 100% !important; height: 30px !important; border-radius: 0px !important;}
+
+.zoomProductSliderThumbs .swiper-button-next:after{transform: rotate(90deg);}
+
+.zoomProductSliderThumbs .swiper-button-prev{top: 20px !important; left: 0 !important; width: 100% !important; height: 30px !important; border-radius: 0px !important;}
+
+.zoomProductSliderThumbs .swiper-button-prev:after{transform: rotate(90deg);}
+
+
+.zoomProductSliderThumbs .swiper-slide .item{opacity: 0.3;}
+.zoomProductSliderThumbs .swiper-slide-active .item{opacity: 1;}
+
+
+
+.productDetailsModal .muiDialogContent-root{padding: 0px !important;}
+
+.productContent .action button{min-width: 40px !important; height: 30px !important; border: 1px solid rgba(0, 0, 0, 0.1) !important; color: rgba(0, 0, 0, 0.7);}
+
+input[type='number'] ::-webkit-inner-spin-button,
+input[type='number'] ::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+}
+
+.reviewScroll::-webkit-scrollbar{width: 5px !important;}
+.reviewScroll::-webkit-scrollbar-thumb{background: #ccc !important;}

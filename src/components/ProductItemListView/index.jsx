@@ -6,15 +6,15 @@ import { FaRegHeart } from "react-icons/fa";
 import { GoGitCompare } from "react-icons/go";
 import { MdOutlineZoomOutMap } from "react-icons/md";
 import Tooltip from "@mui/material/Tooltip";
-
-// Assume your context is like this:
-
+import { MdOutlineShoppingCart } from "react-icons/md";
+import { Button } from "@mui/material";
 import { MyContext } from "../../App";
 
 const ProductItem = () => {
   const context = useContext(MyContext);
+
   return (
-    <div className="productItem rounded-md overflow-hidden border border-black/10">
+    <div className="productItem rounded-md overflow-hidden border border-black/10 flex items-center">
       <div className="group imgWrapper w-full h-[220px] overflow-hidden rounded-md relative">
         <Link to="/" className="block w-full h-full relative">
           <img
@@ -36,12 +36,10 @@ const ProductItem = () => {
         <div className="actions absolute top-2 right-2 z-50 flex items-center gap-2 flex-col w-[50px] opacity-0 group-hover:opacity-100 transition-all duration-300">
           <Tooltip title="Zoom" placement="left">
             <div
-
-            onClick={() => setOpenProductDetailsmodal(true)}
               className="w-[35px] h-[35px] flex items-center justify-center rounded-full bg-white text-black hover:bg-red-500 hover:text-white transition-all duration-300 cursor-pointer"
-              >
-            
-              <MdOutlineZoomOutMap className="text-[18px] !text-black group-hover:text-white hover:!text-white" />
+              onClick={() => context.setOpenProductDetailsmodal(true)}
+            >
+              <MdOutlineZoomOutMap className="text-[18px]" />
             </div>
           </Tooltip>
 
@@ -59,23 +57,36 @@ const ProductItem = () => {
         </div>
       </div>
 
-      <div className="info p-4 bg-[#f1f1f1]">
-        <h6 className="text-[15px] !font-[400]">
+      <div className="info p-3 py-5 px-8 w-[75%]">
+        <h6 className="text-sm">
           <Link to="/" className="hover:text-blue-600 transition-all">
             Soylent Green
           </Link>
         </h6>
-        <h3 className="text-sm font-medium mt-1 mb-2 text-black">
+        <h3 className="text-sm font-medium mt-3 mb-3 text-black">
           <Link to="/" className="hover:text-blue-700 transition-all">
             Siril Georgette Red Color saree with Blouse piece
           </Link>
         </h3>
+
+        <p className="text-[14px] mb-3">
+          We denounce with righteous indignation and dislike men who aro so
+          beguiled and demoralized by charms of pleasure of the moment, so
+          blinded by desire that they cannot.
+        </p>
         <Rating name="size-small" defaultValue={4} size="small" readOnly />
         <div className="flex items-center gap-3 mt-2">
           <span className="line-through text-gray-500 text-sm font-medium">
             $50.00
           </span>
           <span className="text-red-500 font-semibold text-sm">$48.00</span>
+        </div>
+
+        <div className="mt-3">
+          <Button className="btn-org flex gap-2">
+            <MdOutlineShoppingCart className="text-[20px]" />
+            Add to Cart
+          </Button>
         </div>
       </div>
     </div>

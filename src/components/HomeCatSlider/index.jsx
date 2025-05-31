@@ -13,7 +13,7 @@ const HomeCatSlider = () => {
         <div className="">
           <Swiper
             slidesPerView={8}
-            spaceBetween={20}
+            spaceBetween={10} //10
             modules={[Navigation]}
             navigation={true}
             className="mySwiper"
