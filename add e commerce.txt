@@ -1,0 +1,815 @@
+   {/* <form className="form py-3 p-8">
+          <div className="scroll max-h-[72vh] overflow-y-scroll pr-4">
+            <div className="grid grid-cols-1 mb-3">
+              <div className="col">
+                <h3 className="text-[14px] font-[500] mb-1 text-black">
+                  Product Name
+                </h3>
+                <input
+                  type="text"
+                  className="w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 mb-3">
+              <div className="col">
+                <h3 className="text-[14px] font-[500] mb-1 text-black">
+                  Product Description
+                </h3>
+                <textarea
+                  type="text"
+                  className="w-full h-[140px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-4 mb-3 gap-4">
+              <div className="col">
+                <h3 className="text-[14px] font-[500] mb-1 text-black">
+                  Product Category
+                </h3>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="productCatDrop"
+                  size="small"
+                  className="w-full"
+                  value={productCat}
+                  label="Category"
+                  onChange={handleChangeProductCat}
+                >
+                  <MenuItem value={""}>None</MenuItem>
+                  <MenuItem value={10}>Fashion</MenuItem>
+                  <MenuItem value={20}>Beauty</MenuItem>
+                  <MenuItem value={30}>Wellness</MenuItem>
+                </Select>
+              </div>
+
+              <div className="col">
+                <h3 className="text-[14px] font-[500] mb-1 text-black">
+                  Product Sub Category
+                </h3>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="productCatDrop"
+                  size="small"
+                  className="w-full"
+                  value={productSubCat}
+                  label="Category"
+                  onChange={handleChangeProductSubCat}
+                >
+                  <MenuItem value={""}>None</MenuItem>
+                  <MenuItem value={10}>Men</MenuItem>
+                  <MenuItem value={20}>Women</MenuItem>
+                  <MenuItem value={30}>Kids</MenuItem>
+                </Select>
+              </div>
+
+              <div className="col">
+                <h3 className="text-[14px] font-[500] mb-1 text-black">
+                  Product Price
+                </h3>
+                <input
+                  type="number"
+                  className="w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                />
+              </div>
+
+              <div className="col">
+                <h3 className="text-[14px] font-[500] mb-1 text-black">
+                  Product Old Price
+                </h3>
+                <input
+                  type="number"
+                  className="w-full h-[40px] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-4 mb-3 gap-4">
+              <div className="col">
+                <h3 className="text-[14px] font-[500] mb-1 text-black">
+                  Is Featured?
+                </h3>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="productCatDrop"
+                  size="small"
+                  className="w-full"
+                  value={productFeatured}
+                  label="Category"
+                  onChange={handleChangeProductFeatured}
+                >
+                  <MenuItem value={10}>True</MenuItem>
+                  <MenuItem value={20}>False</MenuItem>
+                </Select>
+              </div>
+
+              <div className="col">
+                <h3 className="text-[14px] font-[500] mb-1 text-black">
+                  Product Stock
+                </h3>
+                <input
+                  type="number"
+                  className="w-full h-[40px] border border-[rgba(0,0,0,0.1)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                />
+              </div>
+
+              <div className="col">
+                <h3 className="text-[14px] font-[500] mb-1 text-black">
+                  Product Brand
+                </h3>
+                <input
+                  type="text"
+                  className="w-full h-[40px] border border-[rgba(0,0,0,0.1)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                />
+              </div>
+
+              <div className="col">
+                <h3 className="text-[14px] font-[500] mb-1 text-black">
+                  Product Discount
+                </h3>
+                <input
+                  type="number"
+                  className="w-full h-[40px] border border-[rgba(0,0,0,0.1)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-4 mb-3 gap-4">
+              <div className="col">
+                <h3 className="text-[14px] font-[500] mb-1 text-black">
+                  Product RAMS
+                </h3>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="productCatDrop"
+                  size="small"
+                  className="w-full"
+                  value={productRams}
+                  label="Category"
+                  onChange={handleChangeProductRams}
+                >
+                  <MenuItem value={"4GB"}>4GB</MenuItem>
+                  <MenuItem value={"6GB"}>6GB</MenuItem>
+                  <MenuItem value={"8GB"}>8GB</MenuItem>
+                </Select>
+              </div>
+
+              <div className="col">
+                <h3 className="text-[14px] font-[500] mb-1 text-black">
+                  Product Weight
+                </h3>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="productCatDrop"
+                  size="small"
+                  className="w-full"
+                  value={productWeight}
+                  label="Category"
+                  onChange={handleChangeProductWeight}
+                >
+                  <MenuItem value={""}>None</MenuItem>
+                  <MenuItem value={10}>2KG</MenuItem>
+                  <MenuItem value={20}>4KG</MenuItem>
+                  <MenuItem value={30}>5KG</MenuItem>
+                </Select>
+              </div>
+
+              <div className="col">
+                <h3 className="text-[14px] font-[500] mb-1 text-black">
+                  Product Size
+                </h3>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="productCatDrop"
+                  size="small"
+                  className="w-full"
+                  value={productSize}
+                  label="Category"
+                  onChange={handleChangeProductSize}
+                >
+                  <MenuItem value={""}>None</MenuItem>
+                  <MenuItem value={"S"}>S</MenuItem>
+                  <MenuItem value={"M"}>M</MenuItem>
+                  <MenuItem value={"L"}>L</MenuItem>
+                </Select>
+              </div>
+
+              <div className="col">
+                <h3 className="text-[14px] font-[500] mb-1 text-black">
+                  Product Rating
+                </h3>
+                <Rating name="half-rating" defaultValue={4} precision={2.5} />
+              </div>
+            </div>
+
+            <div className="col w-full p-5 px-0">
+              <h3 className="font-[700] text-[18px] mb-2">Media & Images</h3>
+
+              <div className="grid grid-cols-7 gap-4">
+                <div className="uploadBoxWrapper relative">
+                  <span className="absolute w-[20px] h-[20px] rounded-full overflow-hidden bg-red-700 -top-[5px] -right-[5px] flex items-center justify-center z-50 cursor-pointer">
+                    <IoMdClose className="text-white text-[17px]" />
+                  </span>
+                  <div className="uploadbox p-0 rounded-md overflow-hidden border border-dashed border-[rgba(0,0,0,0.3)] h-[150px] w-[100%] bg-gray-100 cursor-pointer hover:bg-gray-200 flex items-center justify-center flex-col relative">
+                    <LazyLoadImage
+                      className="w-full h-full object-cover"
+                      alt={"image"}
+                      effect="blur"
+                      wrapperProps={{
+                        // If you need to, you can tweak the effect transition using the wrapper style.
+                        style: { transitionDelay: "1s" },
+                      }}
+                      src={
+                        "https://isomorphic-furyroad.s3.amazonaws.com/public/products/modern/15.webp"
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div className="uploadBoxWrapper relative">
+                  <span className="absolute w-[20px] h-[20px] rounded-full overflow-hidden bg-red-700 -top-[5px] -right-[5px] flex items-center justify-center z-50 cursor-pointer">
+                    <IoMdClose className="text-white text-[17px]" />
+                  </span>
+                  <div className="uploadbox p-0 rounded-md overflow-hidden border border-dashed border-[rgba(0,0,0,0.3)] h-[150px] w-[100%] bg-gray-100 cursor-pointer hover:bg-gray-200 flex items-center justify-center flex-col relative">
+                    <LazyLoadImage
+                      className="w-full h-full object-cover"
+                      alt={"image"}
+                      effect="blur"
+                      wrapperProps={{
+                        // If you need to, you can tweak the effect transition using the wrapper style.
+                        style: { transitionDelay: "1s" },
+                      }}
+                      src={
+                        "https://isomorphic-furyroad.s3.amazonaws.com/public/products/modern/15.webp"
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div className="uploadBoxWrapper relative">
+                  <span className="absolute w-[20px] h-[20px] rounded-full overflow-hidden bg-red-700 -top-[5px] -right-[5px] flex items-center justify-center z-50 cursor-pointer">
+                    <IoMdClose className="text-white text-[17px]" />
+                  </span>
+                  <div className="uploadbox p-0 rounded-md overflow-hidden border border-dashed border-[rgba(0,0,0,0.3)] h-[150px] w-[100%] bg-gray-100 cursor-pointer hover:bg-gray-200 flex items-center justify-center flex-col relative">
+                    <LazyLoadImage
+                      className="w-full h-full object-cover"
+                      alt={"image"}
+                      effect="blur"
+                      wrapperProps={{
+                        // If you need to, you can tweak the effect transition using the wrapper style.
+                        style: { transitionDelay: "1s" },
+                      }}
+                      src={
+                        "https://isomorphic-furyroad.s3.amazonaws.com/public/products/modern/15.webp"
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div className="uploadBoxWrapper relative">
+                  <span className="absolute w-[20px] h-[20px] rounded-full overflow-hidden bg-red-700 -top-[5px] -right-[5px] flex items-center justify-center z-50 cursor-pointer">
+                    <IoMdClose className="text-white text-[17px]" />
+                  </span>
+                  <div className="uploadbox p-0 rounded-md overflow-hidden border border-dashed border-[rgba(0,0,0,0.3)] h-[150px] w-[100%] bg-gray-100 cursor-pointer hover:bg-gray-200 flex items-center justify-center flex-col relative">
+                    <LazyLoadImage
+                      className="w-full h-full object-cover"
+                      alt={"image"}
+                      effect="blur"
+                      wrapperProps={{
+                        // If you need to, you can tweak the effect transition using the wrapper style.
+                        style: { transitionDelay: "1s" },
+                      }}
+                      src={
+                        "https://isomorphic-furyroad.s3.amazonaws.com/public/products/modern/15.webp"
+                      }
+                    />
+                  </div>
+                </div>
+
+                <UploadBox multiple={true} />
+              </div>
+            </div>
+          </div>
+          <hr />
+          <br />
+          <br/>
+          <Button type="button" className="btn-blue btn-lg w-full flex gap-2">
+            <FaCloudUploadAlt className="text-[25px] text-white" />
+            Publish and View
+          </Button>
+        </form> */}
+
+
+import "./App.css";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import React, { createContext, useState, useEffect } from "react";
+import toast, { Toaster } from "react-hot-toast";
+import Slide from "@mui/material/Slide";
+import Dialog from "@mui/material/Dialog";
+import AppBar from "@mui/material/AppBar";
+import Toolbar from "@mui/material/Toolbar";
+import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
+import { MdOutlineClose } from "react-icons/md";
+
+// Layout Components
+import Header from "./Components/Header";
+import Sidebar from "./Components/Sidebar";
+
+// Pages
+import DashBoard from "./pages/Dashboard";
+import Login from "./pages/Login";
+import SignUp from "./pages/SignUp";
+import ForgotPassword from "./pages/ForgotPassword";
+import Verify from "./pages/Verify";
+import ChangePassword from "./pages/ChangePassword";
+import Products from "./pages/Products";
+import AddProduct from "./pages/Products/AddProduct";
+import HomeSliderBanners from "./pages/HomeSliderBanners";
+import AddHomeSlide from "./pages/HomeSliderBanners/AddHomeSlide";
+import CategoryList from "./pages/Category";
+import AddCategory from "./pages/Category/addCategory";
+import SubCategoryList from "./pages/Category/subCatList";
+import AddSubCategory from "./pages/Category/addSubCategory";
+import Users from "./pages/Users";
+import Orders from "./pages/Orders";
+import { fetchDataFromApi } from "./utils/api";
+
+export const MyContext = createContext();
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
+function App() {
+  const [isSidebarOpen, setisSidebarOpen] = useState(true);
+  const [isLogin, setIsLogin] = useState(false);
+  const [isOpenFullScreenPanel, setIsOpenFullScreenPanel] = useState({
+    open: false,
+    model: "",
+  });
+  
+    const [userData, setUserData] = useState(null);
+
+  // Product attributes (shared state across pages if needed)
+  const [productCat, setProductCat] = useState("");
+  const [productSubCat, setProductSubCat] = useState("");
+  const [productFeatured, setProductFeatured] = useState("");
+  const [productRams, setProductRams] = useState("");
+  const [productWeight, setProductWeight] = useState("");
+  const [productSize, setProductSize] = useState("");
+
+  // Global alert box (toast)
+  const alertBox = (type, message) => {
+    if (type === "success") toast.success(message);
+    else if (type === "error") toast.error(message);
+    else toast(message);
+  };
+
+   const fetchUserDetails = () => {
+    const token = localStorage.getItem("accessToken");
+  
+    if (!token) {
+      setIsLogin(false);
+      setUserData(null);
+      return;
+    }
+  
+    fetchDataFromApi("/api/user/user-details")
+      .then((res) => {
+        if (res?.error === false) {
+          setIsLogin(true);
+          setUserData(res.data);
+        } else {
+          setIsLogin(false);
+          setUserData(null);
+        }
+      })
+      .catch(() => {
+        setIsLogin(false);
+        setUserData(null);
+      });
+  };
+  useEffect(() => {
+      fetchUserDetails();
+    }, []); // ✅ Run once on mount
+
+  const values = {
+    isSidebarOpen,
+    setisSidebarOpen,
+    isLogin,
+    setIsLogin,
+    isOpenFullScreenPanel,
+    setIsOpenFullScreenPanel,
+    alertBox,
+
+    productCat,
+    setProductCat,
+    productSubCat,
+    setProductSubCat,
+    productFeatured,
+    setProductFeatured,
+    productRams,
+    setProductRams,
+    productWeight,
+    setProductWeight,
+    productSize,
+    setProductSize,
+  };
+
+  const MainLayout = ({ children }) => (
+    <section className="main h-screen flex flex-col">
+      <Header />
+      <div className="flex flex-1 overflow-hidden">
+        <div
+          className={`transition-all duration-300 bg-white shadow-md h-full ${
+            isSidebarOpen ? "w-[240px]" : "w-[60px]"
+          }`}
+        >
+          <Sidebar isCollapsed={!isSidebarOpen} />
+        </div>
+        <div className="flex-1 overflow-y-auto bg-gray-50 p-4">
+          {children}
+        </div>
+      </div>
+    </section>
+  );
+
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: (
+        <MyContext.Provider value={values}>
+          <MainLayout>
+            <DashBoard />
+          </MainLayout>
+        </MyContext.Provider>
+      ),
+    },
+    { path: "/login", element: <Login /> },
+    { path: "/verify", element: <Verify /> },
+    { path: "/sign-up", element: <SignUp /> },
+    { path: "/forgot-password", element: <ForgotPassword /> },
+    { path: "/verify-account", element: <Verify /> },
+    { path: "/change-password", element: <ChangePassword /> },
+
+    {
+      path: "/products",
+      element: (
+        <MyContext.Provider value={values}>
+          <MainLayout>
+            <Products />
+          </MainLayout>
+        </MyContext.Provider>
+      ),
+    },
+    {
+      path: "/homeSlider/list",
+      element: (
+        <MyContext.Provider value={values}>
+          <MainLayout>
+            <HomeSliderBanners />
+          </MainLayout>
+        </MyContext.Provider>
+      ),
+    },
+    {
+      path: "/category/list",
+      element: (
+        <MyContext.Provider value={values}>
+          <MainLayout>
+            <CategoryList />
+          </MainLayout>
+        </MyContext.Provider>
+      ),
+    },
+    {
+      path: "/SubCategory/list",
+      element: (
+        <MyContext.Provider value={values}>
+          <MainLayout>
+            <SubCategoryList />
+          </MainLayout>
+        </MyContext.Provider>
+      ),
+    },
+    {
+      path: "/users",
+      element: (
+        <MyContext.Provider value={values}>
+          <MainLayout>
+            <Users />
+          </MainLayout>
+        </MyContext.Provider>
+      ),
+    },
+    {
+      path: "/orders",
+      element: (
+        <MyContext.Provider value={values}>
+          <MainLayout>
+            <Orders />
+          </MainLayout>
+        </MyContext.Provider>
+      ),
+    },
+  ]);
+
+  return (
+    <MyContext.Provider value={values}>
+      <RouterProvider router={router} />
+
+      {/* Fullscreen Dialog Panel for Add Actions */}
+      <Dialog
+        fullScreen
+        open={isOpenFullScreenPanel.open}
+        onClose={() => setIsOpenFullScreenPanel({ open: false })}
+        TransitionComponent={Transition}
+      >
+        <AppBar sx={{ position: "relative" }}>
+          <Toolbar>
+            <IconButton
+              edge="start"
+              color="inherit"
+              onClick={() => setIsOpenFullScreenPanel({ open: false })}
+              aria-label="close"
+            >
+              <MdOutlineClose />
+            </IconButton>
+            <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+              <span className="text-white">
+                {isOpenFullScreenPanel?.model}
+              </span>
+            </Typography>
+          </Toolbar>
+        </AppBar>
+
+        {isOpenFullScreenPanel?.model === "Add Product" && <AddProduct />}
+        {isOpenFullScreenPanel?.model === "Add Home Slide" && <AddHomeSlide />}
+        {isOpenFullScreenPanel?.model === "Add New Category" && <AddCategory />}
+        {isOpenFullScreenPanel?.model === "Add New  Sub Category" && (
+          <AddSubCategory />
+        )}
+      </Dialog>
+
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 3000,
+          style: {
+            background: "#333",
+            color: "#fff",
+          },
+        }}
+      />
+    </MyContext.Provider>
+  );
+}
+
+export default App;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        ///
+
+
+// const router = createBrowserRouter([
+    {
+      path: "/dashboard",
+      element: (
+        <MyContext.Provider value={values}>
+          <section className="main h-screen flex flex-col">
+            {/* Header */}
+            <Header />
+
+            {/* Content */}
+            <div className="flex flex-1 overflow-hidden">
+              {/* Sidebar */}
+              <div
+                className={`transition-all duration-300 bg-white shadow-md h-full ${
+                  isSidebarOpen ? "w-[240px]" : "w-[60px]"
+                }`}
+              >
+                <Sidebar isCollapsed={!isSidebarOpen} />
+              </div>
+
+              {/* Main Content */}
+              <div className="flex-1 overflow-y-auto bg-gray-50 p-4">
+                <DashBoard />
+              </div>
+            </div>
+          </section>
+        </MyContext.Provider>
+      ),
+    },
+    {
+      path: "/login",
+      element: <Login />,
+    },
+
+    {
+      path: "/verify",
+      element: <Verify />,
+    },
+    
+    {
+      path: "/sign-up",
+      element: <SignUp />,
+    },
+    {
+      path: "/products",
+      element: (
+        <MyContext.Provider value={values}>
+          <section className="main h-screen flex flex-col">
+            {/* Header */}
+            <Header />
+
+            {/* Content */}
+            <div className="flex flex-1 overflow-hidden">
+              {/* Sidebar */}
+              <div
+                className={`transition-all duration-300 bg-white shadow-md h-full ${
+                  isSidebarOpen ? "w-[240px]" : "w-[60px]"
+                }`}
+              >
+                <Sidebar isCollapsed={!isSidebarOpen} />
+              </div>
+
+              {/* Main Content */}
+              <div className="flex-1 overflow-y-auto bg-gray-50 p-4">
+                <Products />
+              </div>
+            </div>
+          </section>
+        </MyContext.Provider>
+      ),
+    },
+     {
+      path: "/homeSlider/list",
+      element: (
+        <MyContext.Provider value={values}>
+          <section className="main h-screen flex flex-col">
+            {/* Header */}
+            <Header />
+
+            {/* Content */}
+            <div className="flex flex-1 overflow-hidden">
+              {/* Sidebar */}
+              <div
+                className={`transition-all duration-300 bg-white shadow-md h-full ${
+                  isSidebarOpen ? "w-[240px]" : "w-[60px]"
+                }`}
+              >
+                <Sidebar isCollapsed={!isSidebarOpen} />
+              </div>
+
+              {/* Main Content */}
+              <div className="flex-1 overflow-y-auto bg-gray-50 p-4">
+                <HomeSliderBanners/>
+              </div>
+            </div>
+          </section>
+        </MyContext.Provider>
+      ),
+    },
+    {
+      path: "/category/list",
+      element: (
+        <MyContext.Provider value={values}>
+          <section className="main h-screen flex flex-col">
+            {/* Header */}
+            <Header />
+
+            {/* Content */}
+            <div className="flex flex-1 overflow-hidden">
+              {/* Sidebar */}
+              <div
+                className={`transition-all duration-300 bg-white shadow-md h-full ${
+                  isSidebarOpen ? "w-[240px]" : "w-[60px]"
+                }`}
+              >
+                <Sidebar isCollapsed={!isSidebarOpen} />
+              </div>
+
+              {/* Main Content */}
+              <div className="flex-1 overflow-y-auto bg-gray-50 p-4">
+                <CategoryList/>
+              </div>
+            </div>
+          </section>
+        </MyContext.Provider>
+      ),
+    },
+    {
+      path: "/SubCategory/list",
+      element: (
+        <MyContext.Provider value={values}>
+          <section className="main h-screen flex flex-col">
+            {/* Header */}
+            <Header />
+
+            {/* Content */}
+            <div className="flex flex-1 overflow-hidden">
+              {/* Sidebar */}
+              <div
+                className={`transition-all duration-300 bg-white shadow-md h-full ${
+                  isSidebarOpen ? "w-[240px]" : "w-[60px]"
+                }`}
+              >
+                <Sidebar isCollapsed={!isSidebarOpen} />
+              </div>
+
+              {/* Main Content */}
+              <div className="flex-1 overflow-y-auto bg-gray-50 p-4">
+                <SubCategoryList/>
+              </div>
+            </div>
+          </section>
+        </MyContext.Provider>
+      ),
+    },
+    {
+      path: "/users",
+      element: (
+        <MyContext.Provider value={values}>
+          <section className="main h-screen flex flex-col">
+            {/* Header */}
+            <Header />
+
+            {/* Content */}
+            <div className="flex flex-1 overflow-hidden">
+              {/* Sidebar */}
+              <div
+                className={`transition-all duration-300 bg-white shadow-md h-full ${
+                  isSidebarOpen ? "w-[240px]" : "w-[60px]"
+                }`}
+              >
+                <Sidebar isCollapsed={!isSidebarOpen} />
+              </div>
+
+              {/* Main Content */}
+              <div className="flex-1 overflow-y-auto bg-gray-50 p-4">
+                <Users/>
+              </div>
+            </div>
+          </section>
+        </MyContext.Provider>
+      ),
+    },
+    {
+      path: "/orders",
+      element: (
+        <MyContext.Provider value={values}>
+          <section className="main h-screen flex flex-col">
+            {/* Header */}
+            <Header />
+
+            {/* Content */}
+            <div className="flex flex-1 overflow-hidden">
+              {/* Sidebar */}
+              <div
+                className={`transition-all duration-300 bg-white shadow-md h-full ${
+                  isSidebarOpen ? "w-[240px]" : "w-[60px]"
+                }`}
+              >
+                <Sidebar isCollapsed={!isSidebarOpen} />
+              </div>
+
+              {/* Main Content */}
+              <div className="flex-1 overflow-y-auto bg-gray-50 p-4">
+                <Orders/>
+              </div>
+            </div>
+          </section>
+        </MyContext.Provider>
+      ),
+    },
+    {
+      path: "/forgot-password",
+      element: <ForgotPassword />,
+    },
+    {
+      path: "/verify-account",
+      element: <Verify />,
+    },
+    {
+      path: "/change-password",
+      element: <ChangePassword />,
+    },
+  ]);

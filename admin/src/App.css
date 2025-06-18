@@ -1,0 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
+body {
+  font-family: "Montserrat", serif;
+  background: #f1f1f1;
+}
+
+.MuiBadge--collapse {
+  background: #ff5252 !important;
+}
+
+.ReactCollapse--collapse {
+  transition: height 300ms;
+}
+
+::-webkit-scrollbar {
+  width: 10px !important;
+  height: 10px !important;
+  background: #ccc !important;
+}
+
+.btn {
+  padding: 8px 20px !important;
+}
+
+.btn-blue {
+  background: #3872fa !important;
+  color: #fff !important;
+  padding: 8px 20px !important;
+}
+
+.btn-blue:hover {
+  background: #3057e5 !important;
+}
+
+.btn-sm {
+  padding: 6px 20px !important;
+}
+
+
+.MuiTableCell-root {
+  @apply bg-[#f1f1f1] ;
+}
+
+
+
