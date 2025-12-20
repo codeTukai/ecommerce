@@ -8,6 +8,12 @@ import { IoMdNotificationsOutline } from "react-icons/io";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Divider from "@mui/material/Divider";
+import { styled } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom";
+
+// Icons
+import { RiMenuFold4Line } from "react-icons/ri";
+import { IoMdNotificationsOutline } from "react-icons/io";
 import { FaCircleUser } from "react-icons/fa6";
 import { RiLogoutCircleRLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
