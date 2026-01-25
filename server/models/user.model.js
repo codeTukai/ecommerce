@@ -5,23 +5,27 @@ const userSchema = new mongoose.Schema(
     name: {
       type: String,
       required: [true, "Provide name"],
+      trim: true,
     },
     email: {
       type: String,
       required: [true, "Provide email"],
       unique: true,
+      lowercase: true,
+      trim: true,
     },
     password: {
       type: String,
       required: [true, "Provide password"],
+      minlength: 6,
     },
     avatar: {
       type: String,
-      default: ""
+      default: "",
     },
     mobile: {
-      type: Number,
-      default: ""
+      type: String, // Changed from Number to String to support international formats
+      default: "",
     },
     verify_email: {
       type: Boolean,
@@ -29,34 +33,37 @@ const userSchema = new mongoose.Schema(
     },
     access_token: {
       type: String,
-      default: ''
+      default: "",
     },
     refresh_token: {
       type: String,
-      default: ''
+      default: "",
     },
     last_login_date: {
       type: Date,
-      default: null, // ✅ better than empty string
+      default: null,
     },
     status: {
       type: String,
       enum: ["Active", "Inactive", "Suspended"],
-      default: "Active", // ✅ Fix here
+      default: "Active",
     },
     address_details: {
-      type: mongoose.Schema.ObjectId,
-      ref: "address",
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Address",
     },
-    shopping_cart: [{
-  type: mongoose.Schema.ObjectId,
-  ref: "cartProduct",
-  }],
-
-    orderHistory: {
-      type: mongoose.Schema.ObjectId,
-      ref: "order",
-    },
+    shopping_cart: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "CartProduct",
+      },
+    ],
+    orderHistory: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Order",
+      },
+    ],
     otp: {
       type: String,
     },
@@ -72,6 +79,4 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const UserModel = mongoose.model("User", userSchema);
-
-export default UserModel;
+export default mongoose.model("User", userSchema);

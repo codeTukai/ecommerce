@@ -1,201 +1,299 @@
-import React, { useState, useContext } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import Checkbox from "@mui/material/Checkbox";
-import FormControlLabel from "@mui/material/FormControlLabel";
+import React, { useState, useContext, useEffect } from "react";
+import {
+  Link,
+  NavLink,
+  useNavigate,
+} from "react-router-dom";
+import {
+  Button,
+  TextField,
+  Checkbox,
+  FormControlLabel,
+  CircularProgress,
+  Avatar,
+  Menu,
+  MenuItem,
+  Typography,
+  Divider,
+  ListItemIcon,
+  IconButton,
+} from "@mui/material";
 import { IoEye, IoEyeOff } from "react-icons/io5";
 import { CiLogin } from "react-icons/ci";
 import { FaRegUser } from "react-icons/fa6";
 import { FcGoogle } from "react-icons/fc";
 import { IoLogoFacebook } from "react-icons/io5";
+import { Logout, Person } from "@mui/icons-material";
 
-import { MyContext } from "../../App"; // ✅ adjust path as needed
-import { postData } from "../../utils/api"; // ✅ adjust path if different
+import { MyContext } from "../../App";
+import { postData } from "../../utils/api";
 
 const Login = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingGoogle, setLoadingGoogle] = useState(false);
+  const [loadingFb, setLoadingFb] = useState(false);
+  const [isShowPassword, setIsShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const [formFields, setFormFields] = useState({ email: "", password: "" });
+
   const context = useContext(MyContext);
   const navigate = useNavigate();
 
-  const [loadingGoogle, setLoadingGoogle] = useState(false);
-  const [loadingFb, setLoadingFb] = useState(false);
-  const [isShowpassword, setIsShowpassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
-  const [formFields, setFormsFields] = useState({
-    email: "",
-    password: "",
-  });
+  // Menu handlers
+  const [anchorEl, setAnchorEl] = useState(null);
+  const menuOpen = Boolean(anchorEl);
+  const handleMenuOpen = (e) => setAnchorEl(e.currentTarget);
+  const handleMenuClose = () => setAnchorEl(null);
 
-  const handleClickGoogle = () => {
-    alert("Google login is not implemented yet");
-    // setLoadingGoogle(true);
-    // setTimeout(() => {
-    //   context?.setisLogin(true);
-    //   navigate("/");
-    // }, 1000);
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+    context.setUserData(null);
+    context.setisLogin(false);
+    context.alertBox("success", "Logged out");
+    handleMenuClose();
   };
 
-  const handleClickFb = () => {
-    alert("Facebook login is not implemented yet");
-    // setLoadingFb(true);
-    // setTimeout(() => {
-    //   context?.setisLogin(true);
-    //   navigate("/");
-    // }, 1000);
+  const handleProfileClick = () => {
+    navigate("/");
+    handleMenuClose();
   };
 
-  const forgotPassword = () => {
-    alert("OTP Sent");
-    navigate("/verify");
+  const onChangeInput = (e) => {
+    const { name, value } = e.target;
+    setFormFields((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!formFields.email || !formFields.password) {
-      context?.alertBox("error", "Please enter email and password");
+  const forgotPassword = async () => {
+    if (!formFields.email) {
+      context.alertBox("error", "Please enter email ID");
       return;
     }
 
     try {
-      const res = await postData("/api/user/login", formFields);
+      localStorage.setItem("userEmail", formFields.email);
+      localStorage.setItem("actionType", "forgot-password");
 
-      if (res?.error !== true && res?.data?.accesstoken) {
-        context?.alertBox("success", res.message);
+      const res = await postData("/api/user/forgot-password", {
+        email: formFields.email,
+      });
 
-        setFormsFields({ email: "", password: "" });
-
-        localStorage.setItem("accessToken", res.data.accesstoken);
-        localStorage.setItem("refreshToken", res.data.refreshToken);
-
-        context?.setisLogin(true);
-        context?.refreshUserData?.();
-        navigate("/");
+      if (!res.error) {
+        context.alertBox("success", res.message);
+        navigate("/verify");
       } else {
-        context?.alertBox("error", res.message || "Login failed");
+        context.alertBox("error", res.message || "Something went wrong");
       }
-    } catch (err) {
-      console.error("Login error:", err);
-      context?.alertBox("error", "Something went wrong");
+    } catch (error) {
+      context.alertBox("error", "Something went wrong");
     }
   };
 
+  const handleClickGoogle = () => {
+    setLoadingGoogle(true);
+    setTimeout(() => {
+      context.setisLogin(true);
+      context.alertBox("success", "Signed in with Google");
+      context.fetchUserDetails?.();
+    }, 1000);
+  };
+
+  const handleClickFb = () => {
+    setLoadingFb(true);
+    setTimeout(() => {
+      context.setisLogin(true);
+      context.alertBox("success", "Signed in with Facebook");
+      context.fetchUserDetails?.();
+    }, 1000);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const { email, password } = formFields;
+
+    if (!email || !password) {
+      context.alertBox("error", "Please fill in all fields");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const res = await postData("/api/user/login", formFields);
+
+      if (!res?.error) {
+        context.alertBox("success", res.message || "Login successful");
+
+        localStorage.setItem("accessToken", res.data?.accesstoken);
+        localStorage.setItem("refreshToken", res.data?.refreshToken);
+
+        context.setisLogin(true);
+        await context.fetchUserDetails?.(); // Fetch but don't navigate yet
+      } else {
+        context.alertBox("error", res.message || "Login failed");
+      }
+    } catch (err) {
+      context.alertBox("error", "Something went wrong");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // ✅ Auto redirect after login + userData ready
+  useEffect(() => {
+    if (context.isLogin && context.userData?._id) {
+      navigate("/");
+    }
+  }, [context.isLogin, context.userData]);
+
   return (
-    <section className="bg-[#fff] min-h-screen relative">
+    <section className="bg-white min-h-screen relative">
       {/* Header */}
-      <header className="w-full fixed top-0 left-0 px-4 py-3 flex items-center justify-between z-50 bg-white shadow-sm">
+      <header className="fixed w-full top-0 left-0 px-4 py-3 flex justify-between items-center z-50 bg-white shadow-sm">
         <Link to={"/"}>
-          <img src="pattern.jpg" className="w-[130px]" alt="logo" />
+          <img src="/pattern.jpg" className="w-[130px]" alt="logo" />
         </Link>
-
-        <div className="flex items-center gap-2">
-          <NavLink to={"/login"}>
-            <Button className="!rounded-full !text-[rgba(0,0,0,0.8)] flex gap-2 !px-5">
-              <CiLogin className="text-[18px]" /> Login
-            </Button>
-          </NavLink>
-
-          <NavLink to={"/sign-up"}>
-            <Button className="!rounded-full !text-[rgba(0,0,0,0.8)] flex gap-1 !px-5">
-              <FaRegUser className="text-[15px]" /> Sign Up
-            </Button>
-          </NavLink>
-        </div>
+        {context?.isLogin ? (
+          <>
+            <IconButton onClick={handleMenuOpen}>
+              <Avatar
+                src={
+                  context.userData?.avatar ||
+                  "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+                }
+              />
+            </IconButton>
+            <Menu
+              anchorEl={anchorEl}
+              open={menuOpen}
+              onClose={handleMenuClose}
+              PaperProps={{
+                elevation: 3,
+                sx: { width: 250, mt: 1.5, borderRadius: 2 },
+              }}
+              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+              transformOrigin={{ vertical: "top", horizontal: "right" }}
+            >
+              <div className="px-4 py-3">
+                <Typography fontWeight="bold">
+                  {context.userData?.name || "Admin User"}
+                </Typography>
+                <Typography fontSize={14} color="text.secondary">
+                  {context.userData?.email || "admin@domain.com"}
+                </Typography>
+              </div>
+              <Divider />
+              <MenuItem onClick={handleProfileClick}>
+                <ListItemIcon>
+                  <Person fontSize="small" />
+                </ListItemIcon>
+                Profile
+              </MenuItem>
+              <MenuItem onClick={handleLogout}>
+                <ListItemIcon>
+                  <Logout fontSize="small" />
+                </ListItemIcon>
+                Sign Out
+              </MenuItem>
+            </Menu>
+          </>
+        ) : (
+          <div className="flex gap-2">
+            <NavLink to={"/login"}>
+              <Button className="!rounded-full flex gap-2 !px-5">
+                <CiLogin className="text-[18px]" /> Login
+              </Button>
+            </NavLink>
+            <NavLink to={"/sign-up"}>
+              <Button className="!rounded-full flex gap-1 !px-5">
+                <FaRegUser className="text-[15px]" /> Sign Up
+              </Button>
+            </NavLink>
+          </div>
+        )}
       </header>
 
       {/* Background */}
       <img
         src="/pattern.jpg"
-        className="w-full fixed top-0 left-0 opacity-5 z-0"
         alt=""
+        className="w-full fixed top-0 left-0 opacity-5 z-0"
       />
 
-      {/* Login Form */}
-      <div className="loginBox card w-[45%] min-h-[450px] mx-auto mt-28 relative z-50 p-6 bg-white shadow-lg rounded-lg">
+      {/* Login Card */}
+      <div className="loginBox w-[45%] min-h-[450px] mx-auto mt-28 relative z-10 p-6 bg-white shadow-lg rounded-lg">
         <div className="text-center">
-          <img src="icon1.webp" className="w-[150px] mx-auto" alt="icon" />
+          <img src="/icon.webp" className="w-[150px] mx-auto" alt="icon" />
         </div>
         <h1 className="text-center text-[28px] font-[800] mt-4 leading-9">
           Welcome Back! <br /> Sign in with your credentials
         </h1>
 
         {/* Social Login */}
-        <div className="flex items-center justify-center w-full mt-5 gap-4">
+        <div className="flex justify-center gap-4 mt-5">
           <Button
-            size="small"
             onClick={handleClickGoogle}
-            endIcon={<FcGoogle className="[20px]" />}
-            loading={loadingGoogle}
-            loadingPosition="end"
             variant="outlined"
-            className="!bg-none !text-[16px] !py-2 !capitalize !px-5 !text-[rgba(0,0,0,0.7)]"
+            className="!text-[16px] !capitalize !px-5"
+            disabled={loadingGoogle}
           >
-            Sign in with Google
+            {loadingGoogle ? <CircularProgress size={20} /> : "Google"}
+            <FcGoogle className="ml-2" />
           </Button>
           <Button
-            size="small"
             onClick={handleClickFb}
-            endIcon={<IoLogoFacebook className="[20px]" />}
-            loading={loadingFb}
-            loadingPosition="end"
             variant="outlined"
-            className="!bg-none !text-[16px] !py-2 gap-2 !capitalize !px-5 !text-[rgba(0,0,0,0.7)]"
+            className="!text-[16px] !capitalize !px-5"
+            disabled={loadingFb}
           >
-            Sign in with Facebook
+            {loadingFb ? <CircularProgress size={20} /> : "Facebook"}
+            <IoLogoFacebook className="ml-2 text-blue-700" />
           </Button>
         </div>
 
         {/* Divider */}
         <div className="flex items-center justify-center mt-6 gap-3">
           <span className="w-[100px] h-[1px] bg-gray-300"></span>
-          <span className="text-[14px] font-[500]">
-            Or, sign in with your email
-          </span>
+          <span className="text-[14px] font-medium">Admin Login</span>
           <span className="w-[100px] h-[1px] bg-gray-300"></span>
         </div>
 
         {/* Form */}
-        <form className="mt-6" onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="mt-6">
           <div className="mb-5">
             <TextField
+              name="email"
               type="email"
-              id="email"
               label="Email Address"
               variant="outlined"
               fullWidth
               value={formFields.email}
-              onChange={(e) =>
-                setFormsFields({ ...formFields, email: e.target.value })
-              }
+              onChange={onChangeInput}
             />
           </div>
 
           <div className="mb-5 relative">
             <TextField
-              type={isShowpassword ? "text" : "password"}
-              id="password"
+              name="password"
+              type={isShowPassword ? "text" : "password"}
               label="Password"
               variant="outlined"
               fullWidth
               value={formFields.password}
-              onChange={(e) =>
-                setFormsFields({ ...formFields, password: e.target.value })
-              }
+              onChange={onChangeInput}
             />
             <Button
               type="button"
-              className="!absolute top-[10px] right-[10px] !w-[35px] !h-[35px] !min-w-[35px] !rounded-full !text-black"
-              onClick={() => setIsShowpassword(!isShowpassword)}
+              className="!absolute top-[10px] right-[10px] !w-[35px] !h-[35px] !min-w-[35px] !rounded-full"
+              onClick={() => setIsShowPassword(!isShowPassword)}
             >
-              {isShowpassword ? (
-                <IoEye className="text-[20px] opacity-75" />
+              {isShowPassword ? (
+                <IoEye className="text-[20px]" />
               ) : (
-                <IoEyeOff className="text-[20px] opacity-75" />
+                <IoEyeOff className="text-[20px]" />
               )}
             </Button>
           </div>
 
-          <div className="flex justify-between items-center mb-3">
+          <div className="flex justify-between items-center mb-4">
             <FormControlLabel
               control={
                 <Checkbox
@@ -207,15 +305,20 @@ const Login = () => {
               label="Remember me"
             />
             <span
-              className="text-[15px] font-[600] cursor-pointer hover:underline"
               onClick={forgotPassword}
+              className="text-[15px] font-semibold cursor-pointer hover:underline"
             >
               Forgot Password?
             </span>
           </div>
 
-          <Button type="submit" className="btn-blue btn-lg w-full">
-            Login
+          <Button
+            type="submit"
+            fullWidth
+            className="btn-blue btn-lg"
+            disabled={isLoading}
+          >
+            {isLoading ? <CircularProgress size={20} /> : "Login"}
           </Button>
         </form>
       </div>

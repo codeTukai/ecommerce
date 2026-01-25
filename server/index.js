@@ -13,6 +13,7 @@ import categoryRouter from './route/category.route.js'; // ✅ Category routes
 import productRouter from './route/product.route.js';
 import cartRouter from './route/cart.route.js';
 import myListRouter from './route/myList.route.js';
+import homeSliderRouter from './route/homeSlider.route.js';
 
 
 
@@ -20,10 +21,14 @@ import myListRouter from './route/myList.route.js';
 const app = express();
 
 // ✅ Allow frontend (React) to access API with cookies/tokens
+
+
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5174', // frontend URL
-  credentials: true
+  origin: "http://localhost:5173", // ✅ your frontend origin
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  credentials: true, // ✅ needed if using cookies or Authorization header
 }));
+
 
 // ✅ Security headers (disable CSP if needed)
 app.use(helmet({
@@ -48,13 +53,27 @@ app.use('/api/category', categoryRouter);
 app.use('/api/product', productRouter);
 app.use('/api/cart',cartRouter);
 app.use('/api/myList',myListRouter);
+app.use('/api/homeSlides',homeSliderRouter);
 
 // ✅ Connect DB and start server
+import CategoryModel from './models/category.model.js'; // Adjust path if needed
+
+
 const PORT = process.env.PORT || 8000;
-connectDB().then(() => {
-  app.listen(PORT, () => {
-    console.log(`🚀 Server running at http://localhost:${PORT}`);
+connectDB()
+  .then(async () => {
+    console.log("✅ MongoDB connected");
+
+    // 🔄 One-time index sync (important after schema change)
+    await CategoryModel.syncIndexes();
+    console.log("✅ Category indexes synced");
+
+    // Start server
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running at http://localhost:${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error("❌ DB connection failed:", err.message);
   });
-}).catch((err) => {
-  console.error("❌ DB connection failed:", err.message);
-});
+

@@ -1,27 +1,37 @@
 import mongoose from "mongoose";
 
-
-const categorySchema = mongoose.Schema ({
+const categorySchema = new mongoose.Schema(
+  {
     name: {
-        type: String,
-        required:true,
-        trim: true
+      type: String,
+      required: [true, "Category name is required"],
+      trim: true,
+      // ❌ REMOVE this line:
+      // unique: true,
     },
-    images:[
-        {
-            type:String,
-        }
+    images: [
+      {
+        type: String,
+        required: true,
+      },
     ],
-    parentCatName:{
-        type:String,
+    parentCatName: {
+      type: String,
+      default: "",
+      trim: true,
     },
     parentId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Category',
-        default: null
-    }
-}, {timestamps: true});
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+      default: null,
+    },
+  },
+  { timestamps: true }
+);
 
-const CategoryModel = mongoose.model('Category', categorySchema)
+// ✅ Create compound index (name + parentId)
+categorySchema.index({ name: 1, parentId: 1 }, { unique: true });
 
-export default CategoryModel
+const CategoryModel = mongoose.model("Category", categorySchema);
+
+export default CategoryModel;

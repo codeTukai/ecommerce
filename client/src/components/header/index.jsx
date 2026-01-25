@@ -70,7 +70,7 @@ const Header = () => {
 
 
   return (
-    <header className="bg-white">
+    <header className="bg-white sticky -top-[130px] z-50">
       {/* Top strip */}
       <div className="top-strip py-2 border-t-[1px] border-gray-250 border-b-[1px]">
         <div className="container">

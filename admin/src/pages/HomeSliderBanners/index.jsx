@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Button,
   Table,
@@ -10,12 +10,12 @@ import {
   TableRow,
   Checkbox,
   Tooltip,
+  CircularProgress,
 } from "@mui/material";
-import { AiOutlineEdit } from "react-icons/ai";
-import { FaRegEye } from "react-icons/fa6";
-import { AiTwotoneDelete } from "react-icons/ai";
+import { AiOutlineEdit, AiTwotoneDelete } from "react-icons/ai";
 import { IoMdAdd } from "react-icons/io";
 import { MyContext } from "../../App";
+import { deleteData, fetchDataFromApi } from "../../utils/api";
 
 const label = { inputProps: { "aria-label": "Select row checkbox" } };
 
@@ -25,9 +25,71 @@ const columns = [
 ];
 
 const HomeSliderBanners = () => {
+  const context = useContext(MyContext);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const context = useContext(MyContext);
+  const [slideData, setSlideData] = useState([]);
+  const [selectedIds, setSelectedIds] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  // ✅ Fetch slider data
+  const getData = async () => {
+    setLoading(true);
+    try {
+      const res = await fetchDataFromApi(`/api/homeSlides`);
+      setSlideData(res?.data || []);
+    } catch (error) {
+      console.error("Failed to fetch home slides:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getData();
+  }, [context?.isOpenFullScreenPanel]);
+
+  // ✅ Checkbox: individual row
+  const handleCheckboxChange = (id) => {
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((pid) => pid !== id) : [...prev, id]
+    );
+  };
+
+  // ✅ Checkbox: delete selected
+  const handleDeleteSelected = async () => {
+    if (selectedIds.length === 0) return;
+    const confirm = window.confirm("Delete selected slides?");
+    if (!confirm) return;
+
+    try {
+      const res = await deleteData("/api/homeSlides/deleteMultipleSlides", {
+        ids: selectedIds,
+      });
+      if (res.success) {
+        context.alertBox("success", res.message);
+        setSelectedIds([]);
+        getData(); // Refresh
+      } else {
+        context.alertBox("error", res.message || "Deletion failed");
+      }
+    } catch (err) {
+      console.error("❌ Deletion error:", err);
+      context.alertBox("error", "Something went wrong.");
+    }
+  };
+
+  // ✅ Checkbox: delete single slide
+  const deleteSlide = async (id) => {
+    const confirm = window.confirm("Are you sure you want to delete this slide?");
+    if (!confirm) return;
+    try {
+      await deleteData(`/api/homeSlides/${id}`);
+      getData();
+    } catch (err) {
+      console.error("Error deleting slide:", err);
+    }
+  };
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
@@ -42,11 +104,17 @@ const HomeSliderBanners = () => {
     <>
       <div className="flex items-center justify-between py-0 px-2 mt-3">
         <h2 className="text-lg font-semibold text-gray-800">
-          Home Slider Banners{" "}
-          <span className="text-[15px] font-[400]">(MUI Table)</span>
+          Home Slider Banners
         </h2>
 
         <div className="w-[22%] ml-auto flex items-center gap-3">
+          <Button
+            className="!bg-red-600 !text-white"
+            disabled={selectedIds.length === 0}
+            onClick={handleDeleteSelected}
+          >
+            Delete Selected
+          </Button>
           <Button className="!bg-green-600 !text-white">Export</Button>
           <Button
             className="!bg-blue-600 !text-white"
@@ -69,7 +137,22 @@ const HomeSliderBanners = () => {
             <TableHead>
               <TableRow>
                 <TableCell width={60}>
-                  <Checkbox {...label} size="small" />
+                  <Checkbox
+                    {...label}
+                    size="small"
+                    checked={selectedIds.length === slideData.length && slideData.length > 0}
+                    indeterminate={
+                      selectedIds.length > 0 && selectedIds.length < slideData.length
+                    }
+                    onChange={(e) => {
+                      const checked = e.target.checked;
+                      if (checked) {
+                        setSelectedIds(slideData.map((item) => item._id));
+                      } else {
+                        setSelectedIds([]);
+                      }
+                    }}
+                  />
                 </TableCell>
                 {columns.map((column) => (
                   <TableCell key={column.id} width={column.minWidth}>
@@ -80,198 +163,72 @@ const HomeSliderBanners = () => {
             </TableHead>
 
             <TableBody>
-              <TableRow>
-                <TableCell>
-                  <Checkbox {...label} size="small" />
-                </TableCell>
-
-                {/* IMAGE COLUMN */}
-                <TableCell>
-                  <div className="flex items-center gap-4 w-[250px]">
-                    <div className="w-full rounded-md overflow-hidden">
-                      <img
-                        src="https://img.freepik.com/free-vector/gradient-shopping-discount-horizontal-sale-banner_23-2150321996.jpg?ga=GA1.1.479220675.1749501540&semt=ais_hybrid&w=740"
-                        alt="Home Slide"
-                        className="w-full h-full object-cover"
-                      />
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={columns.length + 1} align="center">
+                    <div className="py-10">
+                      <CircularProgress />
                     </div>
-                  </div>
-                </TableCell>
+                  </TableCell>
+                </TableRow>
+              ) : slideData?.length > 0 ? (
+                slideData
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((item, index) => (
+                    <TableRow key={item._id || index}>
+                      <TableCell>
+                        <Checkbox
+                          {...label}
+                          size="small"
+                          checked={selectedIds.includes(item._id)}
+                          onChange={() => handleCheckboxChange(item._id)}
+                        />
+                      </TableCell>
 
-                {/* ACTION BUTTONS */}
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <Tooltip title="Edit Slide" placement="top">
-                      <Button
-                        className="!w-[35px] !h-[35px] bg-[#f1f1f1] !border !border-gray-400"
-                        style={{ minWidth: "35px" }}
-                      >
-                        <AiOutlineEdit className="text-gray-700 text-[18px]" />
-                      </Button>
-                    </Tooltip>
-                    <Tooltip title="View Slide" placement="top">
-                      <Button
-                        className="!w-[35px] !h-[35px] bg-[#f1f1f1] !border !border-gray-400"
-                        style={{ minWidth: "35px" }}
-                      >
-                        <FaRegEye className="text-gray-700 text-[18px]" />
-                      </Button>
-                    </Tooltip>
-                    <Tooltip title="Delete Slide" placement="top">
-                      <Button
-                        className="!w-[35px] !h-[35px] bg-[#f1f1f1] !border !border-gray-400"
-                        style={{ minWidth: "35px" }}
-                      >
-                        <AiTwotoneDelete className="text-gray-700 text-[18px]" />
-                      </Button>
-                    </Tooltip>
-                  </div>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>
-                  <Checkbox {...label} size="small" />
-                </TableCell>
+                      {/* IMAGE */}
+                      <TableCell>
+                        <div className="flex items-center gap-4 w-[250px]">
+                          <div className="w-[80px] rounded-md overflow-hidden">
+                            <img
+                              src={item?.images?.[0] || "/no-image.png"}
+                              alt="slide"
+                              className="w-full group-hover:scale-105 transition-all"
+                            />
+                          </div>
+                        </div>
+                      </TableCell>
 
-                {/* IMAGE COLUMN */}
-                <TableCell>
-                  <div className="flex items-center gap-4 w-[250px]">
-                    <div className="w-full rounded-md overflow-hidden">
-                      <img
-                        src="https://img.freepik.com/free-vector/gradient-shopping-discount-horizontal-sale-banner_23-2150321996.jpg?ga=GA1.1.479220675.1749501540&semt=ais_hybrid&w=740"
-                        alt="Home Slide"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  </div>
-                </TableCell>
-
-                {/* ACTION BUTTONS */}
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <Tooltip title="Edit Slide" placement="top">
-                      <Button
-                        className="!w-[35px] !h-[35px] bg-[#f1f1f1] !border !border-gray-400"
-                        style={{ minWidth: "35px" }}
-                      >
-                        <AiOutlineEdit className="text-gray-700 text-[18px]" />
-                      </Button>
-                    </Tooltip>
-                    <Tooltip title="View Slide" placement="top">
-                      <Button
-                        className="!w-[35px] !h-[35px] bg-[#f1f1f1] !border !border-gray-400"
-                        style={{ minWidth: "35px" }}
-                      >
-                        <FaRegEye className="text-gray-700 text-[18px]" />
-                      </Button>
-                    </Tooltip>
-                    <Tooltip title="Delete Slide" placement="top">
-                      <Button
-                        className="!w-[35px] !h-[35px] bg-[#f1f1f1] !border !border-gray-400"
-                        style={{ minWidth: "35px" }}
-                      >
-                        <AiTwotoneDelete className="text-gray-700 text-[18px]" />
-                      </Button>
-                    </Tooltip>
-                  </div>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>
-                  <Checkbox {...label} size="small" />
-                </TableCell>
-
-                {/* IMAGE COLUMN */}
-                <TableCell>
-                  <div className="flex items-center gap-4 w-[250px]">
-                    <div className="w-full rounded-md overflow-hidden">
-                      <img
-                        src="https://img.freepik.com/free-vector/gradient-shopping-discount-horizontal-sale-banner_23-2150321996.jpg?ga=GA1.1.479220675.1749501540&semt=ais_hybrid&w=740"
-                        alt="Home Slide"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  </div>
-                </TableCell>
-
-                {/* ACTION BUTTONS */}
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <Tooltip title="Edit Slide" placement="top">
-                      <Button
-                        className="!w-[35px] !h-[35px] bg-[#f1f1f1] !border !border-gray-400"
-                        style={{ minWidth: "35px" }}
-                      >
-                        <AiOutlineEdit className="text-gray-700 text-[18px]" />
-                      </Button>
-                    </Tooltip>
-                    <Tooltip title="View Slide" placement="top">
-                      <Button
-                        className="!w-[35px] !h-[35px] bg-[#f1f1f1] !border !border-gray-400"
-                        style={{ minWidth: "35px" }}
-                      >
-                        <FaRegEye className="text-gray-700 text-[18px]" />
-                      </Button>
-                    </Tooltip>
-                    <Tooltip title="Delete Slide" placement="top">
-                      <Button
-                        className="!w-[35px] !h-[35px] bg-[#f1f1f1] !border !border-gray-400"
-                        style={{ minWidth: "35px" }}
-                      >
-                        <AiTwotoneDelete className="text-gray-700 text-[18px]" />
-                      </Button>
-                    </Tooltip>
-                  </div>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>
-                  <Checkbox {...label} size="small" />
-                </TableCell>
-
-                {/* IMAGE COLUMN */}
-                <TableCell>
-                  <div className="flex items-center gap-4 w-[250px]">
-                    <div className="w-full rounded-md overflow-hidden">
-                      <img
-                        src="https://img.freepik.com/free-vector/gradient-shopping-discount-horizontal-sale-banner_23-2150321996.jpg?ga=GA1.1.479220675.1749501540&semt=ais_hybrid&w=740"
-                        alt="Home Slide"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  </div>
-                </TableCell>
-
-                {/* ACTION BUTTONS */}
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <Tooltip title="Edit Slide" placement="top">
-                      <Button
-                        className="!w-[35px] !h-[35px] bg-[#f1f1f1] !border !border-gray-400"
-                        style={{ minWidth: "35px" }}
-                      >
-                        <AiOutlineEdit className="text-gray-700 text-[18px]" />
-                      </Button>
-                    </Tooltip>
-                    <Tooltip title="View Slide" placement="top">
-                      <Button
-                        className="!w-[35px] !h-[35px] bg-[#f1f1f1] !border !border-gray-400"
-                        style={{ minWidth: "35px" }}
-                      >
-                        <FaRegEye className="text-gray-700 text-[18px]" />
-                      </Button>
-                    </Tooltip>
-                    <Tooltip title="Delete Slide" placement="top">
-                      <Button
-                        className="!w-[35px] !h-[35px] bg-[#f1f1f1] !border !border-gray-400"
-                        style={{ minWidth: "35px" }}
-                      >
-                        <AiTwotoneDelete className="text-gray-700 text-[18px]" />
-                      </Button>
-                    </Tooltip>
-                  </div>
-                </TableCell>
-              </TableRow>
+                      {/* ACTION */}
+                      <TableCell>
+                        <div className ="flex items-center gap-2">
+                          <Tooltip title="Edit Slide" placement="top">
+                            <Button
+                              className="!w-[35px] !h-[35px] bg-[#f1f1f1] !border !border-gray-400"
+                              style={{ minWidth: "35px" }}
+                            >
+                              <AiOutlineEdit className="text-gray-700 text-[18px]" />
+                            </Button>
+                          </Tooltip>
+                          <Tooltip title="Delete Slide" placement="top">
+                            <Button
+                              className="!w-[35px] !h-[35px] bg-[#f1f1f1] !border !border-gray-400"
+                              style={{ minWidth: "35px" }}
+                              onClick={() => deleteSlide(item._id)}
+                            >
+                              <AiTwotoneDelete className="text-gray-700 text-[18px]" />
+                            </Button>
+                          </Tooltip>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={columns.length + 1} align="center">
+                    No slides found.
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </TableContainer>
@@ -279,7 +236,7 @@ const HomeSliderBanners = () => {
         <TablePagination
           rowsPerPageOptions={[10, 25, 100]}
           component="div"
-          count={10} // Replace with actual total rows
+          count={slideData.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

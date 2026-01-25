@@ -2,13 +2,8 @@ import "./App.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import React, { createContext, useState, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import Slide from "@mui/material/Slide";
-import Dialog from "@mui/material/Dialog";
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import { MdOutlineClose } from "react-icons/md";
+
+
 
 // Layout Components
 import Header from "./Components/Header";
@@ -22,85 +17,122 @@ import ForgotPassword from "./pages/ForgotPassword";
 import Verify from "./pages/Verify";
 import ChangePassword from "./pages/ChangePassword";
 import Products from "./pages/Products";
-import AddProduct from "./pages/Products/AddProduct";
 import HomeSliderBanners from "./pages/HomeSliderBanners";
-import AddHomeSlide from "./pages/HomeSliderBanners/AddHomeSlide";
 import CategoryList from "./pages/Category";
-import AddCategory from "./pages/Category/addCategory";
 import SubCategoryList from "./pages/Category/subCatList";
-import AddSubCategory from "./pages/Category/addSubCategory";
 import Users from "./pages/Users";
 import Orders from "./pages/Orders";
+import Profile from "./pages/profile";
 import { fetchDataFromApi } from "./utils/api";
+import ProductDetails from "./pages/Products/productDetails";
+import AddRAMS from "./pages/Products/addRAMS";
+import AddWeight from "./pages/Products/addWeight";
+import AddSize from "./pages/Products/addSize";
 
 export const MyContext = createContext();
 
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
+
 
 function App() {
   const [isSidebarOpen, setisSidebarOpen] = useState(true);
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLogin, setisLogin] = useState(false);
+  const [userData, setUserData] = useState(null);
   const [isOpenFullScreenPanel, setIsOpenFullScreenPanel] = useState({
     open: false,
     model: "",
   });
-  
-    const [userData, setUserData] = useState(null);
 
-  // Product attributes (shared state across pages if needed)
   const [productCat, setProductCat] = useState("");
   const [productSubCat, setProductSubCat] = useState("");
   const [productFeatured, setProductFeatured] = useState("");
   const [productRams, setProductRams] = useState("");
   const [productWeight, setProductWeight] = useState("");
   const [productSize, setProductSize] = useState("");
+  const [catData, setCatData] = useState([]);
+  const [productList, setProductList] = useState([]);
 
-  // Global alert box (toast)
+  // editCategory persist via localStorage
+  const [editCategory, setEditCategory] = useState(() => {
+    const saved = localStorage.getItem("editCategory");
+    return saved ? JSON.parse(saved) : null;
+  });
+
+  useEffect(() => {
+    if (editCategory) {
+      localStorage.setItem("editCategory", JSON.stringify(editCategory));
+    } else {
+      localStorage.removeItem("editCategory");
+    }
+  }, [editCategory]);
+
   const alertBox = (type, message) => {
     if (type === "success") toast.success(message);
     else if (type === "error") toast.error(message);
     else toast(message);
   };
 
-   const fetchUserDetails = () => {
+  const fetchUserDetails = async () => {
     const token = localStorage.getItem("accessToken");
-  
     if (!token) {
-      setIsLogin(false);
+      setisLogin(false);
       setUserData(null);
       return;
     }
-  
-    fetchDataFromApi("/api/user/user-details")
-      .then((res) => {
-        if (res?.error === false) {
-          setIsLogin(true);
-          setUserData(res.data);
-        } else {
-          setIsLogin(false);
-          setUserData(null);
-        }
-      })
-      .catch(() => {
-        setIsLogin(false);
+
+    try {
+      const res = await fetchDataFromApi("/api/user/user-details");
+      if (res?.error === false && res?.data?._id) {
+        setisLogin(true);
+        setUserData(res.data);
+      } else {
+        setisLogin(false);
         setUserData(null);
-      });
+      }
+    } catch (err) {
+      console.error("Error fetching user details:", err);
+      setisLogin(false);
+      setUserData(null);
+    }
   };
+
   useEffect(() => {
-      fetchUserDetails();
-    }, []); // ✅ Run once on mount
+    fetchUserDetails();
+    getCat(); // Load categories with nesting
+  }, []);
+
+  // ✅ Fetch and structure categories with subcategories
+  const getCat = async () => {
+    try {
+      const res = await fetchDataFromApi("/api/category");
+      if (res?.success && Array.isArray(res?.data)) {
+        const all = res.data;
+
+        // Group subcategories under parent categories
+        const grouped = all
+          .filter((cat) => !cat.parentId) // only top-level
+          .map((parent) => ({
+            ...parent,
+            subCategories: all.filter((sub) => sub.parentId === parent._id),
+          }));
+
+        setCatData(grouped);
+      }
+    } catch (err) {
+      console.error("Error fetching categories:", err);
+    }
+  };
 
   const values = {
     isSidebarOpen,
     setisSidebarOpen,
     isLogin,
-    setIsLogin,
+    setisLogin,
     isOpenFullScreenPanel,
     setIsOpenFullScreenPanel,
     alertBox,
-
+    userData,
+    setUserData,
+    fetchUserDetails,
     productCat,
     setProductCat,
     productSubCat,
@@ -113,6 +145,14 @@ function App() {
     setProductWeight,
     productSize,
     setProductSize,
+    editCategory,
+    setEditCategory,
+    catData,
+    setCatData,
+    getCat,
+    productList,
+    setProductList,
+    
   };
 
   const MainLayout = ({ children }) => (
@@ -126,128 +166,46 @@ function App() {
         >
           <Sidebar isCollapsed={!isSidebarOpen} />
         </div>
-        <div className="flex-1 overflow-y-auto bg-gray-50 p-4">
-          {children}
-        </div>
+        <div className="flex-1 overflow-y-auto bg-gray-50 p-4">{children}</div>
       </div>
     </section>
   );
 
-  const router = createBrowserRouter([
-    {
-      path: "/",
-      element: (
-        <MyContext.Provider value={values}>
-          <MainLayout>
-            <DashBoard />
-          </MainLayout>
-        </MyContext.Provider>
-      ),
-    },
-    { path: "/login", element: <Login /> },
-    { path: "/verify", element: <Verify /> },
-    { path: "/sign-up", element: <SignUp /> },
-    { path: "/forgot-password", element: <ForgotPassword /> },
-    { path: "/change-password", element: <ChangePassword /> },
+  const withLayout = (PageComponent) => (
+    <MainLayout>
+      <PageComponent />
+    </MainLayout>
+  );
 
-    {
-      path: "/products",
-      element: (
-        <MyContext.Provider value={values}>
-          <MainLayout>
-            <Products />
-          </MainLayout>
-        </MyContext.Provider>
-      ),
-    },
-    {
-      path: "/homeSlider/list",
-      element: (
-        <MyContext.Provider value={values}>
-          <MainLayout>
-            <HomeSliderBanners />
-          </MainLayout>
-        </MyContext.Provider>
-      ),
-    },
-    {
-      path: "/category/list",
-      element: (
-        <MyContext.Provider value={values}>
-          <MainLayout>
-            <CategoryList />
-          </MainLayout>
-        </MyContext.Provider>
-      ),
-    },
-    {
-      path: "/SubCategory/list",
-      element: (
-        <MyContext.Provider value={values}>
-          <MainLayout>
-            <SubCategoryList />
-          </MainLayout>
-        </MyContext.Provider>
-      ),
-    },
-    {
-      path: "/users",
-      element: (
-        <MyContext.Provider value={values}>
-          <MainLayout>
-            <Users />
-          </MainLayout>
-        </MyContext.Provider>
-      ),
-    },
-    {
-      path: "/orders",
-      element: (
-        <MyContext.Provider value={values}>
-          <MainLayout>
-            <Orders />
-          </MainLayout>
-        </MyContext.Provider>
-      ),
-    },
-  ]);
+ const router = createBrowserRouter([
+  { path: "/", element: withLayout(DashBoard) },
+  { path: "/login", element: <Login /> },
+  
+  { path: "/verify", element: <Verify /> },
+  { path: "/sign-up", element: <SignUp /> },
+  { path: "/forgot-password", element: <ForgotPassword /> },
+  { path: "/change-password", element: <ChangePassword /> },
+  { path: "/profile", element: withLayout(Profile) },
+  { path: "/products", element: withLayout(Products) },
+  { path: "/product/:id", element: withLayout(ProductDetails) },
+  { path: "/product/addRams", element: withLayout(AddRAMS) },
+  { path: "/product/addWeight", element: withLayout(AddWeight) },
+  { path: "/product/addSize", element: withLayout(AddSize) },
+ // ✅ NEW: dynamic route
+  { path: "/homeSlider/list", element: withLayout(HomeSliderBanners) },
+  { path: "/category/list", element: withLayout(CategoryList) },
+  { path: "/SubCategory/list", element: withLayout(SubCategoryList) },
+  { path: "/users", element: withLayout(Users) },
+  { path: "/orders", element: withLayout(Orders) },
+]);
+
 
   return (
     <MyContext.Provider value={values}>
       <RouterProvider router={router} />
 
-      {/* Fullscreen Dialog Panel for Add Actions */}
-      <Dialog
-        fullScreen
-        open={isOpenFullScreenPanel.open}
-        onClose={() => setIsOpenFullScreenPanel({ open: false })}
-        TransitionComponent={Transition}
-      >
-        <AppBar sx={{ position: "relative" }}>
-          <Toolbar>
-            <IconButton
-              edge="start"
-              color="inherit"
-              onClick={() => setIsOpenFullScreenPanel({ open: false })}
-              aria-label="close"
-            >
-              <MdOutlineClose />
-            </IconButton>
-            <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-              <span className="text-white">
-                {isOpenFullScreenPanel?.model}
-              </span>
-            </Typography>
-          </Toolbar>
-        </AppBar>
-
-        {isOpenFullScreenPanel?.model === "Add Product" && <AddProduct />}
-        {isOpenFullScreenPanel?.model === "Add Home Slide" && <AddHomeSlide />}
-        {isOpenFullScreenPanel?.model === "Add New Category" && <AddCategory />}
-        {isOpenFullScreenPanel?.model === "Add New  Sub Category" && (
-          <AddSubCategory />
-        )}
-      </Dialog>
+      {/* Full screen Dialog Panel */}
+     
 
       <Toaster
         position="top-right"

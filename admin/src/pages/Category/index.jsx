@@ -1,13 +1,21 @@
-import React, { useContext, useState } from "react";
-import UploadBox from "../../Components/UploadBox";
-import { LazyLoadImage } from "react-lazy-load-image-component";
-import "react-lazy-load-image-component/src/effects/blur.css";
+import React, { useContext, useEffect, useState } from "react";
+import {
+  Button,
+  Checkbox,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TablePagination,
+  TableRow,
+  Tooltip,
+} from "@mui/material";
 import { AiOutlineEdit, AiTwotoneDelete } from "react-icons/ai";
 import { IoEyeOutline } from "react-icons/io5";
-import { Button, Tooltip, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Checkbox } from "@mui/material";
-import { FaCloudUploadAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { MyContext } from "../../App";
+import { fetchDataFromApi, deleteData } from "../../utils/api";
 
 const columns = [
   { id: "image", label: "IMAGE", minWidth: 250 },
@@ -17,47 +25,48 @@ const columns = [
 
 const label = { inputProps: { "aria-label": "Select row checkbox" } };
 
-// Sample row data
-const rows = Array(5).fill({
-  id: 45745,
-  imageUrl: "https://isomorphic-furyroad.s3.amazonaws.com/public/products/modern/6.webp"
-});
-
 const CategoryList = () => {
+  const context = useContext(MyContext);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const handleChangePage = (event, newPage) => setPage(newPage);
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
+  const deleteCat = async (id) => {
+    await deleteData(`/api/category/${id}`);
+    const res = await fetchDataFromApi("/api/category");
+    context?.setCatData(res?.data);
   };
 
-  const context = useContext(MyContext)
+  useEffect(() => {
+    fetchDataFromApi("/api/category").then((res) => {
+      context?.setCatData(res?.data);
+    });
+  }, [context?.isOpenFullScreenPanel]);
 
   return (
     <>
       <div className="flex items-center justify-between py-0 px-2 mt-3">
         <h2 className="text-lg font-semibold text-gray-800">
-          Category List{" "}
+          Category List {" "}
           <span className="text-[15px] font-[400]">(Material UI Table)</span>
         </h2>
-
         <div className="col w-[22%] ml-auto flex items-center gap-3">
-          <Button className="btn !bg-green-600 !text-white border-t-neutral-50">
-            Export
-          </Button>
+          <Button className="btn !bg-green-600 !text-white">Export</Button>
           <Button
-          className="!bg-blue-600 !text-white"
-             onClick={() =>
+            className="!bg-blue-600 !text-white"
+            onClick={() => {
+              context.setEditCategory(null); // Reset editing state
               context.setIsOpenFullScreenPanel({
                 open: true,
                 model: "Add New Category",
-              })
-            }
+              });
+            }}
           >
             Add New Category
           </Button>
@@ -79,63 +88,75 @@ const CategoryList = () => {
                 ))}
               </TableRow>
             </TableHead>
-
             <TableBody>
-              {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
-                <TableRow key={index}>
-                  <TableCell>
-                    <Checkbox {...label} size="small" />
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-4 w-[80px]">
-                      <div className="w-full rounded-md overflow-hidden group">
-                        <Link to={`/product/${row.id}`} data-discover="true">
-                          <img
-                            src={row.imageUrl}
-                            className="w-full group-hover:scale-105 transition-all"
-                            alt="Product"
-                          />
-                        </Link>
-                      </div>
-                    </div>
-                  </TableCell>
+              {context?.catData?.length > 0 ? (
+                context.catData
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row, index) => (
+                    <TableRow key={row._id || index}>
+                      <TableCell>
+                        <Checkbox {...label} size="small" />
+                      </TableCell>
 
-                  <TableCell width={100}>
-                    Fashion
-                  </TableCell>
+                      {/* Image Cell */}
+                      <TableCell>
+                        <div className="flex items-center gap-4 w-[80px]">
+                          <div className="w-full rounded-md overflow-hidden group">
+                            <Link to={`/product/${row._id}`} data-discover="true">
+                              <img
+                                src={row.imageUrl || row.images?.[0]}
+                                className="w-full group-hover:scale-105 transition-all"
+                                alt="Category"
+                              />
+                            </Link>
+                          </div>
+                        </div>
+                      </TableCell>
 
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Tooltip title="Edit Product" placement="top-end">
-                        <Button
-                          className="!w-[35px] !h-[35px] bg-[#f1f1f1] !border !border-[rgba(0,0,0,0.4)]"
-                          style={{ minWidth: "35px" }}
-                        >
-                          <AiOutlineEdit className="text-[rgba(0,0,0,0.7)] text-[18px]" />
-                        </Button>
-                      </Tooltip>
+                      {/* Name Cell */}
+                      <TableCell width={100}>{row.name}</TableCell>
 
-                      <Tooltip title="View Product Details" placement="top-end">
-                        <Button
-                          className="!w-[35px] !h-[35px] bg-[#f1f1f1] !border !border-[rgba(0,0,0,0.4)]"
-                          style={{ minWidth: "35px" }}
-                        >
-                          <IoEyeOutline className="text-[rgba(0,0,0,0.7)] text-[18px]" />
-                        </Button>
-                      </Tooltip>
-
-                      <Tooltip title="Remove Product" placement="top-end">
-                        <Button
-                          className="!w-[35px] !h-[35px] bg-[#f1f1f1] !border !border-[rgba(0,0,0,0.4)]"
-                          style={{ minWidth: "35px" }}
-                        >
-                          <AiTwotoneDelete className="text-[rgba(0,0,0,0.7)] text-[18px]" />
-                        </Button>
-                      </Tooltip>
-                    </div>
+                      {/* Action Buttons */}
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Tooltip title="Edit Category" placement="top-end">
+                            <Button
+                              onClick={() => {
+                                context.setEditCategory(row);
+                                context.setIsOpenFullScreenPanel({
+                                  open: true,
+                                  model: "Edit Category",
+                                });
+                              }}
+                              className="!w-[35px] !h-[35px] bg-[#f1f1f1]"
+                            >
+                              <AiOutlineEdit className="text-[rgba(0,0,0,0.7)] text-[18px]" />
+                            </Button>
+                          </Tooltip>
+                          <Tooltip title="View Details" placement="top-end">
+                            <Button className="!w-[35px] !h-[35px] bg-[#f1f1f1]">
+                              <IoEyeOutline className="text-[rgba(0,0,0,0.7)] text-[18px]" />
+                            </Button>
+                          </Tooltip>
+                          <Tooltip title="Delete Category" placement="top-end">
+                            <Button
+                              onClick={() => deleteCat(row._id)}
+                              className="!w-[35px] !h-[35px] bg-[#f1f1f1]"
+                            >
+                              <AiTwotoneDelete className="text-[rgba(0,0,0,0.7)] text-[18px]" />
+                            </Button>
+                          </Tooltip>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={4} align="center">
+                    No categories found.
                   </TableCell>
                 </TableRow>
-              ))}
+              )}
             </TableBody>
           </Table>
         </TableContainer>
@@ -143,7 +164,7 @@ const CategoryList = () => {
         <TablePagination
           rowsPerPageOptions={[10, 25, 100]}
           component="div"
-          count={rows.length}
+          count={context?.catData?.length || 0}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

@@ -3,7 +3,6 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-
 import Home from "./pages/Home";
 import ProductListing from "./pages/ProductListing";
 import { ProductDetails } from "./pages/ProductDetails";
@@ -41,39 +40,36 @@ function App() {
   const [userData, setUserData] = useState(null);
   const [openCartPanel, setOpenCartPanel] = useState(false);
 
-  const fetchUserDetails = () => {
-  const token = localStorage.getItem("accessToken");
+  // ✅ Get user details on mount
+  const fetchUserDetails = async () => {
+    const token = localStorage.getItem("accessToken");
 
-  if (!token) {
-    setIsLogin(false);
-    setUserData(null);
-    return;
-  }
-
-  fetchDataFromApi("/api/user/user-details")
-    .then((res) => {
-      if (res?.error === false) {
-        setIsLogin(true);
-        setUserData(res.data);
-      } else {
-        setIsLogin(false);
-        setUserData(null);
-      }
-    })
-    .catch(() => {
+    if (!token) {
       setIsLogin(false);
       setUserData(null);
-    });
-};
+      return;
+    }
 
+    const res = await fetchDataFromApi("/api/user/user-details");
+
+    if (res?.error === false) {
+      setIsLogin(true);
+      setUserData(res.data);
+    } else {
+      console.warn("Auth error:", res.message || "Failed to fetch user");
+      setIsLogin(false);
+      setUserData(null);
+    }
+  };
 
   useEffect(() => {
     fetchUserDetails();
-  }, []); // ✅ Run once on mount
+  }, []);
 
+  // Toast alert
   const openAlertBox = (status, msg) => {
     if (status === "success") toast.success(msg);
-    if (status === "error") toast.error(msg);
+    else if (status === "error") toast.error(msg);
   };
 
   const modalContextValue = {
@@ -90,7 +86,7 @@ function App() {
     setIsLogin,
     userData,
     setUserData,
-    refreshUserData: fetchUserDetails, // ✅ Optional: Call this after login/register
+    refreshUserData: fetchUserDetails,
     setOpenCartPanel,
   };
 

@@ -70,32 +70,36 @@ export const editData = async (url, data, config = { withCredentials: true }) =>
 
 
 // src/utils/api.js
-
 export const uploadImage = async (url, formData) => {
-  try {
-    const token = localStorage.getItem("accessToken");
+  const token = localStorage.getItem("accessToken");
 
-    const res = await fetch(import.meta.env.VITE_API_URL + url, {
-      method: "PUT",
-      body: formData,
-      credentials: "include", // ✅ sends cookies if any
+  try {
+    const response = await fetch(import.meta.env.VITE_API_URL + url, {
+      method: "PUT", // or POST if your route uses POST
       headers: {
-        Authorization: `Bearer ${token}`, // ✅ send token
+        Authorization: `Bearer ${token}`, // ✅ No Content-Type here
       },
+      body: formData,
     });
 
-    if (!res.ok) {
-      const errorText = await res.text();
-      throw new Error(`Image upload failed: ${res.status} - ${errorText}`);
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(`Image upload failed: ${response.status} - ${JSON.stringify(result)}`);
     }
 
-    const data = await res.json();
-    return { data };
-  } catch (error) {
-    console.error("uploadImage error:", error);
-    throw new Error("Image upload failed");
+    return result;
+  } catch (err) {
+    console.error("uploadImage error:", err);
+    throw err;
   }
 };
+
+
+
+
+
+
 
 
 

@@ -2,6 +2,12 @@ import CategoryModel from '../models/category.model.js';
 import { v2 as cloudinary } from 'cloudinary';
 import fs from 'fs';
 
+// utils/cloudinary.js
+
+import dotenv from "dotenv";
+
+dotenv.config(); // Load .env
+
 cloudinary.config({
   cloud_name: process.env.cloudinary_Config_Cloud_Name,
   api_key:process.env.cloudinary_Config_api_key, 
@@ -9,36 +15,32 @@ cloudinary.config({
   secure : true,
 });
 
+
+export default cloudinary;
+
 // ✅ Image Upload Controller
-var imagesArr = [];
+let imagesArr = [];
+
 export async function uploadImages(request, response) {
   try {
     imagesArr = [];
+    const images = request.files;
 
-    const image = request.files;
-
-      const options = {
-            use_filename: true,
-            unique_filename: false,
-            overwrite: false,
+    const options = {
+      use_filename: true,
+      unique_filename: false,
+      overwrite: false,
     };
 
-   for (let i = 0; i < image?.length; i++) {
-
-      const img = await cloudinary.uploader.upload(
-        image[i].path,
-        options,
-        function (error, result) {
-          imagesArr.push(result.secure_url);
-         fs.unlinkSync(`uploads/${request.files[i].filename}`);
-        
-      }
-    );
-
-  }
+    for (let i = 0; i < images.length; i++) {
+      const result = await cloudinary.uploader.upload(images[i].path, options);
+      imagesArr.push(result.secure_url);
+      fs.unlinkSync(images[i].path); // Clean up temp file
+    }
 
     return response.status(200).json({
-      images: imagesArr
+      images: imagesArr,
+      success: true,
     });
 
   } catch (error) {
@@ -46,48 +48,74 @@ export async function uploadImages(request, response) {
       message: error.message || error,
       error: true,
       success: false,
-    })
+    });
+  }
+}
+
+export async function createCategory(req, res) {
+  try {
+    const { name, images, parentId, parentCatName } = req.body;
+
+    // ✅ Only check if images is an array (allow empty array)
+    if (!name || !Array.isArray(images)) {
+      return res.status(400).json({
+        message: "Name is required and images must be an array.",
+        error: true,
+        success: false,
+      });
+    }
+
+    // ✅ Check for duplicate name under same parentId
+    const existing = await CategoryModel.findOne({
+      name: name.trim(),
+      parentId: parentId || null,
+    });
+
+    if (existing) {
+      return res.status(400).json({
+        message: `Category "${name}" already exists under this parent.`,
+        error: true,
+        success: false,
+      });
+    }
+
+    // ✅ Create category
+    const category = new CategoryModel({
+      name: name.trim(),
+      images,
+      parentId: parentId || null,
+      parentCatName: parentCatName || "",
+    });
+
+    const savedCategory = await category.save();
+
+    return res.status(201).json({
+      message: "Category created successfully",
+      success: true,
+      error: false,
+      category: savedCategory,
+    });
+
+  } catch (error) {
+    console.error("CreateCategory Error:", error.message);
+
+    if (error.code === 11000) {
+      return res.status(400).json({
+        message: `Duplicate category name "${req.body.name}"`,
+        error: true,
+        success: false,
+      });
+    }
+
+    return res.status(500).json({
+      message: error.message || "Server Error",
+      success: false,
+      error: true,
+    });
   }
 }
 
 
-export async function createCategory(request, response) {
-    try {
-        let category = new CategoryModel ({
-            name: request.body.name,
-            images: imagesArr,
-            parentId: request.body.parentId,
-            parentCatName: request.body.parentCatName,
-        });
-
-        if (!category) {
-           return response.status(500).json({
-            message: "Category not created",
-            error: true,
-            success: false,
-    })
-    }
-
-    category = await category.save();
-    imagesArr = [];
-
-    return response.status(500).json({
-            message: "Category created",
-            error: false,
-            success: true,
-            category: category
-    })
-
-
-    } catch (error) {
-        return response.status(500).json({
-            message: error.message || error,
-            error: true,
-            success: false,
-    })
-
-    }
-}
 
 
 
@@ -302,34 +330,86 @@ export async function deleteCategory(request, response){
 
 
 
-export async function updatedCategory (request, response){
-    const category = await CategoryModel.findByIdAndUpdate(
-        request.params.id,
-        {
-            name: request.body.name,
-            images: imagesArr.length>0 ? imagesArr[0] : request.body.images,
-            parentId:request.body.parentId,
-            parentCatName: request.body.parentCatName
-        },
+// export async function updatedCategory (request, response){
+//     const category = await CategoryModel.findByIdAndUpdate(
+//         request.params.id,
+//         {
+          
+//             name: request.body.name,
+//             images: imagesArr.length>0 ? imagesArr[0] : request.body.images,
+//             parentId:request.body.parentId,
+//             parentCatName: request.body.parentCatName
+//         },
 
-        { new: true }
+//         { new: true }
 
+//     );
+
+//     if (!category) {
+//         return response.status(500).json({
+//             message: "Category cannot be updated!",
+//             success: false,
+//             error: true
+//         });
+//     }
+
+//     imagesArr = [];
+
+//     response.status(200).json({
+//         error: false,
+//         success: true,
+//         category: category
+//     })
+
+// }
+
+export async function updatedCategory(req, res) {
+  try {
+    const {
+      name,
+      images = [],
+      parentId = null,
+      parentCatName = ""
+    } = req.body;
+
+    // Fallback: if images array is valid, take first image
+    const finalImage = Array.isArray(images) && images.length > 0 ? images[0] : null;
+
+    const updated = await CategoryModel.findByIdAndUpdate(
+      req.params.id,
+      {
+        name,
+        images: finalImage, // Assuming schema only supports 1 image; adjust if needed
+        parentId,
+        parentCatName
+      },
+      { new: true }
     );
 
-    if (!category) {
-        return response.status(500).json({
-            message: "Category cannot be updated!",
-            success: false,
-            error: true
-        });
+    if (!updated) {
+      return res.status(500).json({
+        message: "Category cannot be updated!",
+        success: false,
+        error: true
+      });
     }
 
-    imagesArr = [];
+    return res.status(200).json({
+      message: "Category updated successfully",
+      success: true,
+      error: false,
+      category: updated
+    });
 
-    response.status(200).json({
-        error: false,
-        success: true,
-        category: category
-    })
-
+  } catch (error) {
+    console.error("UpdateCategory Error:", error.message);
+    return res.status(500).json({
+      message: error.message || "Server error",
+      success: false,
+      error: true
+    });
+  }
 }
+
+
+

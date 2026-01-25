@@ -1,12 +1,65 @@
-.categoryPanel button{text-transform: capitalize !important;}
+/* Parent list item needs to be positioned */
+.nav li {
+  position: relative;
+}
 
-.nav li .submenu {visibility: hidden;z-index: 1000;}
-.nav li .submenu button{font-weight: 400 !important;}
-.nav li:hover > .submenu{opacity: 1 !important; visibility: visible !important; top: 100% !important;}
-.nav li .submenu li:hover > button{color: #ff5252 !important;}
+/* Base submenu hidden */
+.nav li .submenu {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  z-index: 1000;
+  min-width: 200px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
 
-.nav li .submenu li .submenu{top: 0px !important; left: 100% !important; opacity: 0 !important; visibility: hidden !important;}
-.nav li .submenu li:hover > .submenu{left: 100% !important; opacity: 1 !important; visibility: visible !important;}
+/* Show on hover */
+.nav li:hover > .submenu {
+  visibility: visible;
+  opacity: 1;
+}
 
-.nav li .submenu li .submenu button{color: rgba(0, 0, 0, 0.80) !important;}
-.nav li .submenu li .submenu button:hover{color: #ff5252 !important;}
+/* 3rd level submenu */
+.nav li .submenu li {
+  position: relative;
+}
+
+.nav li .submenu li .submenu {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 100%;
+  background: white;
+  z-index: 1001;
+  min-width: 200px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Show 3rd level on hover */
+.nav li .submenu li:hover > .submenu {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Button styles inside menus */
+.nav li .submenu button {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  color: rgba(0, 0, 0, 0.8);
+  padding: 10px 15px;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.nav li .submenu button:hover {
+  color: #ff5252;
+  background-color: rgba(255, 82, 82, 0.05);
+}

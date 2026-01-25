@@ -1,6 +1,5 @@
 import UserModel from '../models/user.model.js';
 import bcryptjs from 'bcryptjs';
-// import bcrypt from 'bcrypt';
 import bcrypt from "bcrypt";
 
 import jwt from 'jsonwebtoken';
@@ -23,6 +22,7 @@ cloudinary.config({
 
 
 // ✅ Exported controller with correct params
+
 
 
 
@@ -51,42 +51,30 @@ export async function registerUserController(request, response) {
     }
 
     // ✅ Generate OTP
-    const verifyCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
     // ✅ Hash password
     const salt = await bcryptjs.genSalt(10);
     const hashPassword = await bcryptjs.hash(password, salt);
 
     // ✅ Save user
-    let newUser;
+    const newUser = new UserModel({
+      name,
+      email,
+      password: hashPassword,
+      otp,
+      otpExpire: Date.now() + 10 * 60 * 1000,
+    });
+
+    await newUser.save();
+    console.log("✅ User saved successfully:", newUser.email);
+
+    // ✅ Send verification email with correct arguments
     try {
-      newUser = new UserModel({
-        name,
-        email,
-        password: hashPassword,
-        otp: verifyCode,
-        otpExpire: Date.now() + 10 * 60 * 1000, // 10 minutes
-      });
-
-      await newUser.save();
-      console.log("✅ User saved successfully:", newUser.email);
-    } catch (dbError) {
-      console.error("❌ DB Save Error:", dbError.message);
-      return response.status(500).json({
-        message: "Failed to register user. Please try again later.",
-        error: true,
-        success: false,
-      });
-    }
-
-    // ✅ Send verification email
-    try {
-     await sendEmailFun(email, "Verify your email", "", verificationEmail(name, verifyCode)); // wrong usage
-
+      await sendEmailFun(email, otp, name);
       console.log("📧 Verification email sent to:", email);
     } catch (emailError) {
       console.error("❌ Email Sending Error:", emailError.message);
-      // You might still let user proceed to verify
     }
 
     // ✅ Generate JWT token
@@ -112,6 +100,7 @@ export async function registerUserController(request, response) {
     });
   }
 }
+
 
 
 
@@ -292,83 +281,64 @@ export async function logoutController(request, response) {
 
 
 
+
+
+
+
 var imagesArr = [];
+
 export async function userAvatarController(request, response) {
   try {
-    imagesArr = []; 
+    imagesArr = [];
 
     const userId = request.userId; // set by auth middleware
     const image = request.files;
-    
 
+    const user = await UserModel.findOne({ _id: userId });
 
+    if (!user) {
+      return response.status(404).json({
+        message: "User not found",
+        error: true,
+        success: false,
+      });
+    }
 
-  const user = await UserModel.findOne({ _id: userId});
+    // Delete old avatar if exists
+    if (user.avatar) {
+      const urlArr = user.avatar.split("/");
+      const avatarImage = urlArr[urlArr.length - 1];
+      const imageName = avatarImage.split(".")[0];
 
-
-   if (!user) {
-     return response.status(500).json({
-      message: "User not found",
-      error: true,
-      success: false,
-    });
-  }
-  
-  const imgUrl = user.avatar;
-
-  const urlArr = imgUrl.split("/");
-  const avatar_image = urlArr[urlArr.length - 1];
-
-  const imageName = avatar_image.split(".")[0];
-
-  if (imageName) {
-    const res = await cloudinary.uploader.destroy(
-      imageName,
-      (error, result)=>{
-
+      if (imageName) {
+        await cloudinary.uploader.destroy(imageName);
       }
-    );
-    
-  }
+    }
 
-
-
-
-
-
-
-  const userAvater = user.avatar;
-  if (!user) {
-     return response.status(500).json({
-      message: "User not found",
-      error: true,
-      success: false,
-    });
-  }
-  
-
-
-    const options ={
+    const options = {
       use_filename: true,
-      unique: true,
-      overwrite: false
+      unique_filename: true,
+      overwrite: true,
     };
 
     for (let i = 0; i < image?.length; i++) {
-
-      
-      const img = await cloudinary.uploader.upload(
+      const result = await cloudinary.uploader.upload(
         image[i].path,
-        options,
-        function(error, result){
-          imagesArr.push(result.secure_url);
-          fs.unlinkSync(`uploads/${request.files[i].filename}`);
-
-        
-          
-        }
+        options
       );
-      
+
+      if (result?.secure_url) {
+        imagesArr.push(result.secure_url);
+        fs.unlinkSync(`uploads/${image[i].filename}`);
+      }
+    }
+
+    if (imagesArr.length === 0) {
+      return response.status(400).json({
+        message: "Image upload failed",
+        error: true,
+        success: false,
+      });
     }
 
     user.avatar = imagesArr[0];
@@ -376,9 +346,9 @@ export async function userAvatarController(request, response) {
 
     return response.status(200).json({
       _id: userId,
-      avtar: imagesArr[0] //
+      avatar: imagesArr[0], // ✅ fixed key
+      success: true,
     });
-
   } catch (error) {
     return response.status(500).json({
       message: error.message || "Internal server error",
@@ -387,6 +357,7 @@ export async function userAvatarController(request, response) {
     });
   }
 }
+
 
 
 

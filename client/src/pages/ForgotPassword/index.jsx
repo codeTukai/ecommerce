@@ -65,7 +65,7 @@ const ForgotPassword = () => {
     try {
       setIsLoading(true);
 
-      const response = await postData("/api/user/reset-password", {
+      const response = await postData("/api/user/forgot-password", {
         email: email.trim(),
         newPassword: password.trim(),
         confirmPassword: confirmPassword.trim(),

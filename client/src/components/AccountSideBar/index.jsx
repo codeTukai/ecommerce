@@ -4,7 +4,7 @@ import { VscCloudUpload } from "react-icons/vsc";
 import { FaRegCircleUser, FaRegHeart } from "react-icons/fa6";
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { AiOutlineLogout } from "react-icons/ai";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { MyContext } from "../../App";
 import CircularProgress from "@mui/material/CircularProgress";
 import { editData, uploadImage } from "../../utils/api";
@@ -13,6 +13,7 @@ const AccountSideBar = () => {
   const [previews, setPreviews] = useState([]);
   const [uploading, setUploading] = useState(false);
   const context = useContext(MyContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (context?.userData?.avatar) {
@@ -37,9 +38,8 @@ const AccountSideBar = () => {
             file.type === "image/webp")
         ) {
           formData.append("avatar", file);
-          
         } else {
-          context.alertBox("error", "Only JPG, PNG, or WEBP images allowed.");
+          context.openAlertBox("error", "Only JPG, PNG, or WEBP images allowed.");
           setUploading(false);
           return;
         }
@@ -48,18 +48,32 @@ const AccountSideBar = () => {
       const res = await uploadImage(apiEndPoint, formData);
       setUploading(false);
 
-      if (res?.data?.avtar) {
-        setPreviews([res.data.avtar]);
+      if (res?.data?.avatar) {
+        const newAvatar = res.data.avatar;
+        setPreviews([newAvatar]);
+
+        // Update context userData
+        const updatedUser = { ...context.userData, avatar: newAvatar };
+        context.setUserData(updatedUser);
+
+        // Save avatar to backend profile
+        await editData("/api/user/update-profile", { avatar: newAvatar });
+
+        context.openAlertBox("success", "Profile picture updated");
       }
     } catch (error) {
       console.error("Upload error:", error);
       setUploading(false);
+      context.openAlertBox("error", "Something went wrong");
     }
   };
 
   const handleLogout = () => {
-    // Add your logout logic here
-    console.log("User logged out");
+    localStorage.removeItem("accessToken");
+    context.setisLogin(false);
+    context.setUserData(null);
+    context.openAlertBox("success", "Logged out successfully");
+    navigate("/login");
   };
 
   return (
@@ -97,8 +111,10 @@ const AccountSideBar = () => {
           </div>
         </div>
 
-        <h3>{context?.userData?.name}</h3>
-        <h6 className="text-[13px] font-[500]">{context?.userData?.email}</h6>
+        <h3>{context?.userData?.name || "No Name"}</h3>
+        <h6 className="text-[13px] font-[500]">
+          {context?.userData?.email || "No Email"}
+        </h6>
       </div>
 
       <ul className="list-none pb-5 bg-[#f1f1f1] myAccountTabs">

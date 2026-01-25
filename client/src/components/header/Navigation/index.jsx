@@ -119,35 +119,35 @@ const Navigation = () => {
               </li>
 
               <li className="list-none">
-                <Link to="/" className="link transition text-[14px] font-[500]">
+                <Link to={"/"} className="link transition text-[14px] font-[500]">
                   <Button className="link transition !font-[400] !text-[rgba(0,0,0,0.5)] hover:!text-[#ff5252] !py-4">
                     Electronics
                   </Button>
                 </Link>
               </li>
               <li className="list-none">
-                <Link to="/" className="link transition text-[14px] font-[500]">
+                <Link to={"/"} className="link transition text-[14px] font-[500]">
                   <Button className="link transition !font-[400] !text-[rgba(0,0,0,0.5)] hover:!text-[#ff5252] !py-4">
                     Bags
                   </Button>
                 </Link>
               </li>
               <li className="list-none">
-                <Link to="/" className="link transition text-[14px] font-[500]">
+                <Link to={"/"} className="link transition text-[14px] font-[500]">
                   <Button className="link transition !font-[400] !text-[rgba(0,0,0,0.5)] hover:!text-[#ff5252] !py-4">
                     Footwear
                   </Button>
                 </Link>
               </li>
               <li className="list-none">
-                <Link to="/" className="link transition text-[14px] font-[500]">
+                <Link to={"/"} className="link transition text-[14px] font-[500]">
                   <Button className="link transition !font-[400] !text-[rgba(0,0,0,0.5)] hover:!text-[#ff5252] !py-4">
                     Sports
                   </Button>
                 </Link>
               </li>
               <li className="list-none">
-                <Link to="/" className="link transition text-[14px] font-[500]">
+                <Link to={"/"} className="link transition text-[14px] font-[500]">
                   <Button className="link transition !font-[400] !text-[rgba(0,0,0,0.5)] hover:!text-[#ff5252] !py-4">
                     Groceries
                   </Button>

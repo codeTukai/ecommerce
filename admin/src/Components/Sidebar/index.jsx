@@ -16,6 +16,7 @@ const Sidebar = () => {
   const [openCategory, setOpenCategory] = useState(false);
 
   const context = useContext(MyContext);
+  const isSidebarOpen = context?.isSidebarOpen ?? true;
 
   return (
     <div className="sidebar fixed top-0 left-0 bg-white h-full border-r border-[rgba(0,0,0,0.1)] py-1 px-1 overflow-y-auto">
@@ -114,23 +115,7 @@ const Sidebar = () => {
           </Button>
           <Collapse isOpened={openProducts}>
             <ul className="ml-6 mt-1">
-              <li className="w-full">
-                <Button className="!text-[rgba(0,0,0,0.7)] !capitalize !justify-start !w-full !text-[13px] !font-medium  flex gap-3"
-onClick={() =>
-                    context.setIsOpenFullScreenPanel({
-                      open: true,
-                      model: "Add product",
-                    })
-                  }
-                
-                
-                >
-                  <span className="block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]"></span>
-                  Product Upload
-                </Button>
-              </li>
-             
-              <li className="w-full">
+               <li className="w-full">
                  <Link to={"/products"}>
                 <Button className="!text-[rgba(0,0,0,0.7)] !capitalize !justify-start !w-full !text-[13px] !font-medium  flex gap-3 ">
                   <span className="block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]"></span>
@@ -140,19 +125,47 @@ onClick={() =>
                 
               </li>
               <li className="w-full">
-                <Button
-                  className="!text-[rgba(0,0,0,0.7)] !capitalize !justify-start !w-full !text-[13px] !font-medium  flex gap-3"
-                  onClick={() =>
-                    context.setIsOpenFullScreenPanel({
-                      open: true,
-                      model: "Add product",
-                    })
-                  }
+                <Button className="!text-[rgba(0,0,0,0.7)] !capitalize !justify-start !w-full !text-[13px] !font-medium  flex gap-3"
+
+                 onClick={() =>
+                context.setIsOpenFullScreenPanel({
+                  open: true,
+                  model: "Add Product",
+                })
+              }
+                
                 >
                   <span className="block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]"></span>
                   Product Upload
                 </Button>
               </li>
+              <li className="w-full">
+                <Link to={"/product/AddRAMS"}>
+                <Button className="!text-[rgba(0,0,0,0.7)] !capitalize !justify-start !w-full !text-[13px] !font-medium  flex gap-3">
+                  <span className="block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]"></span>
+                  Add Product RAMS
+                </Button>
+                </Link>
+              </li>
+              <li className="w-full">
+                <Link to={"/product/AddWeight"}>
+                <Button className="!text-[rgba(0,0,0,0.7)] !capitalize !justify-start !w-full !text-[13px] !font-medium  flex gap-3">
+                  <span className="block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]"></span>
+                  Add Product Weight
+                </Button>
+                </Link>
+              </li>
+              <li className="w-full">
+                <Link to={"/product/AddSize"}>
+                <Button className="!text-[rgba(0,0,0,0.7)] !capitalize !justify-start !w-full !text-[13px] !font-medium  flex gap-3">
+                  <span className="block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]"></span>
+                  Add Product Size
+                </Button>
+                </Link>
+              </li>
+              
+             
+              
             </ul>
           </Collapse>
         </li>

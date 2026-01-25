@@ -74,7 +74,7 @@ const Orders = () => {
                     <td className="px-6 py-4">john@example.com</td>
                     <td className="px-6 py-4 text-red-400">USR123</td>
                     <td className="px-6 py-4">
-                      <Badge status="confirm" />
+                      <Badge status="pending" />
                     </td>
                     <td className="px-6 py-4">2025-06-01</td>
                   </tr>

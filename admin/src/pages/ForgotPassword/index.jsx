@@ -1,165 +1,207 @@
-import Button from "@mui/material/Button";
-import React, { useState,  } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
-import { CiLogin } from "react-icons/ci";
-import { FaRegUser } from "react-icons/fa6";
+import React, { useContext, useState, useEffect } from "react";
 import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
 import { IoEye, IoEyeOff } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
+import { MyContext } from "../../App";
+import { postData } from "../../utils/api";
 
-
-const forgotPassword = () => {
-  const [isShowpassword, setIsShowpassword] = useState(false);
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+const ForgotPassword = () => {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [formFields, setFormsFields] = useState({
-    email: "",
-    password: "",
-  });
+  const [isLoading, setIsLoading] = useState(false);
+  const [isFormValid, setIsFormValid] = useState(false);
 
+  const context = useContext(MyContext);
   const navigate = useNavigate();
 
+  const storedEmail = localStorage.getItem("userEmail") || "";
 
+  const [formFields, setFormFields] = useState({
+    email: storedEmail,
+    password: "",
+    confirmPassword: "",
+  });
 
-  const forgotPassword = () => {
-    alert("OTP Sent");
-    navigate("/verify");
+  // ✅ Validate form fields dynamically
+  useEffect(() => {
+    const { email, password, confirmPassword } = formFields;
+    const valid =
+      email.trim() !== "" &&
+      password.trim().length >= 6 &&
+      confirmPassword.trim().length >= 6 &&
+      password === confirmPassword;
+    setIsFormValid(valid);
+  }, [formFields]);
+
+  // ✅ Handle input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormFields((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
-  const handleSubmit = (e) => {
+  // ✅ Submit form
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formFields.email && formFields.password) {
-      context.setisLogin(true);
-      navigate("/");
-    } else {
-      alert("Please enter email and password");
+    const { email, password, confirmPassword } = formFields;
+
+    if (!email || !password || !confirmPassword) {
+      context.openAlertBox("error", "Please fill in all fields.");
+      return;
+    }
+
+    if (password.length < 6) {
+      context.openAlertBox("error", "Password must be at least 6 characters.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      context.openAlertBox("error", "Passwords do not match.");
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+
+      const response = await postData("/api/user/forgot-password", {
+        email: email.trim(),
+        newPassword: password.trim(),
+        confirmPassword: confirmPassword.trim(),
+      });
+
+      if (response?.error === false) {
+        context.openAlertBox(
+          "success",
+          response.message || "Password reset successful."
+        );
+
+        // ✅ Redirect to login after short delay
+        setTimeout(() => {
+          localStorage.removeItem("userEmail");
+          localStorage.removeItem("actionType");
+          navigate("/login", { replace: true });
+        }, 1500);
+      } else {
+        context.openAlertBox("error", response?.message || "Reset failed.");
+      }
+    } catch (error) {
+      console.error("Reset error:", error);
+      context.openAlertBox("error", "Something went wrong.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <section className="bg-white w-full h-full relative">
-      <header className="w-full fixed top-0 left-0 px-4 py-3 flex items-center justify-between z-50 bg-white shadow-sm">
-        <Link to={"/"}>
-          <img src="pattern.jpg" className="w-[130px]" alt="logo" />
-        </Link>
-
-        <div className="flex items-center gap-2">
-          <NavLink to={"/login"}>
-            <Button className="!rounded-full !text-[rgba(0,0,0,0.8)] flex gap-2 !px-5">
-              <CiLogin className="text-[18px]" /> Login
-            </Button>
-          </NavLink>
-
-          <NavLink to={"/sign-up"}>
-            <Button className="!rounded-full !text-[rgba(0,0,0,0.8)] flex gap-1 !px-5">
-              <FaRegUser className="text-[15px]" /> Sign Up
-            </Button>
-          </NavLink>
-        </div>
-      </header>
-
-      <img
-        src="/pattern.jpg"
-        className="w-full fixed top-0 left-0 opacity-5 z-0"
-        alt=""
-      />
-
-      <div className="loginBox card w-[45%] min-h-[450px] mx-auto mt-28 relative z-50 p-6 bg-white shadow-lg rounded-lg">
-        <div className="text-center">
-          <img src="icon1.webp" className="w-[150px] mx-auto" alt="icon" />
-        </div>
-        <h1 className="text-center text-[28px] font-[800] mt-4 leading-9">
-          Having trouble to sign in? <br />
-          Reset your password
-        </h1>
-
-        <br />
-
-        <form className="mt-6" onSubmit={handleSubmit}>
-          <div className="mb-5">
-            <TextField
-              type="email"
-              id="email"
-              label="Email Id"
-              variant="outlined"
-              fullWidth
-              value={formFields.email}
-              onChange={(e) =>
-                setFormsFields({ ...formFields, email: e.target.value })
-              }
-            />
-          </div>
-          <div className="form-group w-full mb-5 relative">
-            <TextField
-              type={showNewPassword ? "text" : "password"}
-              id="new_password"
-              label="New Password"
-              variant="outlined"
-              className="w-full"
-              name="newPassword"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-            />
-            <Button
-              type="button"
-              onClick={() => setShowNewPassword(!showNewPassword)}
-              className="!absolute top-[10px] right-[10px] z-[10] !min-w-[35px] !w-[35px] !h-[35px] !rounded-full !text-black"
-            >
-              {showNewPassword ? (
-                <IoEye className="text-[20px] opacity-75" />
-              ) : (
-                <IoEyeOff className="text-[20px] opacity-75" />
-              )}
-            </Button>
-          </div>
-
-          <div className="form-group w-full mb-5 relative">
-            <TextField
-              type={showConfirmPassword ? "text" : "password"}
-              id="confirm_password"
-              label="Confirm Password"
-              variant="outlined"
-              className="w-full"
-              name="confirmPassword"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-            />
-            <Button
-              type="button"
-              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              className="!absolute top-[10px] right-[10px] z-[10] !min-w-[35px] !w-[35px] !h-[35px] !rounded-full !text-black"
-            >
-              {showConfirmPassword ? (
-                <IoEye className="text-[20px] opacity-75" />
-              ) : (
-                <IoEyeOff className="text-[20px] opacity-75" />
-              )}
-            </Button>
-          </div>
-
-          <Button type="submit" className="btn-blue btn-lg w-full">
+    <section className="section py-10">
+      <div className="container">
+        <div className="card shadow-md w-[400px] m-auto rounded-md bg-white p-5 px-10">
+          <h3 className="text-center text-[18px] text-black font-semibold">
             Reset Password
-          </Button>
+          </h3>
 
-          <br />
-          <br />
+          <form className="w-full mt-5" onSubmit={handleSubmit}>
+            {/* Email Field */}
+            <div className="form-group w-full mb-5">
+              <TextField
+                type="email"
+                label="Email"
+                variant="outlined"
+                fullWidth
+                name="email"
+                value={formFields.email}
+                disabled
+                helperText="Email verified via OTP"
+              />
+            </div>
 
-          <div className="flex text-center items-center justify-center gap-4">
-            <span className="text-center flex items-center justify-center gap-4">
-              <span>Don't want to reset?</span>
-              <Link
-                to={"/forgot-password"}
-                className="text-blue-500 font-[700] text-[15px] hover:underline hover:text-gray-700"
+            {/* New Password */}
+            <div className="form-group w-full mb-5 relative">
+              <TextField
+                type={showNewPassword ? "text" : "password"}
+                label="New Password"
+                variant="outlined"
+                fullWidth
+                name="password"
+                value={formFields.password}
+                disabled={isLoading}
+                onChange={handleInputChange}
+                autoComplete="new-password"
+              />
+              <Button
+                type="button"
+                aria-label={showNewPassword ? "Hide password" : "Show password"}
+                onClick={() => setShowNewPassword((prev) => !prev)}
+                sx={{
+                  position: "absolute",
+                  top: 10,
+                  right: 10,
+                  minWidth: 35,
+                  width: 35,
+                  height: 35,
+                  borderRadius: "50%",
+                  color: "black",
+                }}
               >
-                Sign In?
-              </Link>
-            </span>
-          </div>
-        </form>
+                {showNewPassword ? <IoEye /> : <IoEyeOff />}
+              </Button>
+            </div>
+
+            {/* Confirm Password */}
+            <div className="form-group w-full mb-5 relative">
+              <TextField
+                type={showConfirmPassword ? "text" : "password"}
+                label="Confirm Password"
+                variant="outlined"
+                fullWidth
+                name="confirmPassword"
+                value={formFields.confirmPassword}
+                disabled={isLoading}
+                onChange={handleInputChange}
+                autoComplete="new-password"
+              />
+              <Button
+                type="button"
+                aria-label={
+                  showConfirmPassword ? "Hide password" : "Show password"
+                }
+                onClick={() => setShowConfirmPassword((prev) => !prev)}
+                sx={{
+                  position: "absolute",
+                  top: 10,
+                  right: 10,
+                  minWidth: 35,
+                  width: 35,
+                  height: 35,
+                  borderRadius: "50%",
+                  color: "black",
+                }}
+              >
+                {showConfirmPassword ? <IoEye /> : <IoEyeOff />}
+              </Button>
+            </div>
+
+            {/* Submit Button */}
+            <Button
+              type="submit"
+              disabled={!isFormValid || isLoading}
+              className="btn-org btn-lg w-full flex gap-3"
+            >
+              {isLoading ? (
+                <CircularProgress color="inherit" size={20} />
+              ) : (
+                "Change Password"
+              )}
+            </Button>
+          </form>
+        </div>
       </div>
     </section>
   );
 };
 
-export default forgotPassword;
+export default ForgotPassword;

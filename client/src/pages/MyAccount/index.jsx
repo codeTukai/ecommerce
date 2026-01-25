@@ -67,7 +67,7 @@ const MyAccount = () => {
     e.preventDefault();
 
     if (!formFields.name || !formFields.email || !formFields.mobile) {
-      context.alertBox("error", "All fields are required");
+      context.openAlertBox("error", "All fields are required");
       return;
     }
 
@@ -75,12 +75,12 @@ const MyAccount = () => {
     try {
       const res = await editData(`/api/user/${userId}`, formFields, { withCredentials: true });
       if (!res?.error) {
-        context.alertBox("success", res?.data?.message);
+        context.openAlertBox("success", res?.data?.message);
       } else {
-        context.alertBox("error", res?.data?.message);
+        context.openAlertBox("error", res?.data?.message);
       }
     } catch (err) {
-      context.alertBox("error", "Something went wrong");
+      context.openAlertBox("error", "Something went wrong");
     } finally {
       setIsLoading(false);
     }
@@ -92,12 +92,12 @@ const MyAccount = () => {
     const { oldPassword, newPassword, confirmPassword } = changePassword;
 
     if (!oldPassword || !newPassword || !confirmPassword) {
-      context.alertBox("error", "Please fill in all password fields");
+      context.openAlertBox("error", "Please fill in all password fields");
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      context.alertBox("error", "New password and confirm password do not match");
+      context.openAlertBox("error", "New password and confirm password do not match");
       return;
     }
 
@@ -105,13 +105,13 @@ const MyAccount = () => {
     try {
       const res = await postData("/api/user/reset-password", changePassword, { withCredentials: true });
       if (!res?.error) {
-        context.alertBox("success", res?.message);
+        context.openAlertBox("success", res?.message);
         setChangePassword((prev) => ({ ...prev, oldPassword: '', newPassword: '', confirmPassword: '' }));
       } else {
-        context.alertBox("error", res?.message);
+        context.openAlertBox("error", res?.message);
       }
     } catch (err) {
-      context.alertBox("error", "Something went wrong");
+      context.openAlertBox("error", "Something went wrong");
     } finally {
       setIsLoading2(false);
     }

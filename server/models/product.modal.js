@@ -15,6 +15,12 @@ const productSchema = mongoose.Schema({
         required: true
         }
     ],
+    bannerImages: [
+        {
+        type: String,
+        required: true
+        }
+    ],
     brand: {
         type: String,
         default: ''
@@ -71,6 +77,11 @@ const productSchema = mongoose.Schema({
         type: Number,
         required: true,
     },
+    sale: {
+        type: Number,
+        default: 0,
+        
+    },
     productRam: {
         type: String,
         default: null,
@@ -81,14 +92,25 @@ const productSchema = mongoose.Schema({
             efault: null,
         }
     ],
-    productWeight: {
+    productWeight:
+      [ 
+        
+        { 
+
         type: String,
         default: null,
-    },
+    }
+    ],
+  
+      
     dateCreated: {
         type: Date,
         default: Date.now,
     },
+     bannerTitleName: {
+    type: String,
+    required: false, // 🔧 Fix applied: now optional
+  },
 },{
     timestamps : true
 });
