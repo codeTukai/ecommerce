@@ -48,4 +48,7 @@ UploadBox.propTypes = {
   onChange: PropTypes.func.isRequired,
 };
 
+
 export default UploadBox;
+
+

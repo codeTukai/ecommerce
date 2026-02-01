@@ -18,6 +18,7 @@ import homeSliderRouter from './route/homeSlider.route.js';
 
 
 
+
 const app = express();
 
 // ✅ Allow frontend (React) to access API with cookies/tokens

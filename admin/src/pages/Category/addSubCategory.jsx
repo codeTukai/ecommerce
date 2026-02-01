@@ -106,35 +106,45 @@ const AddSubCategory = () => {
     }
   };
 
-  const submitThirdCategory = async (e) => {
-    e.preventDefault();
-    setIsLoading((prev) => ({ ...prev, third: true }));
+ const submitThirdCategory = async (e) => {
+  e.preventDefault();
+  setIsLoading((prev) => ({ ...prev, third: true }));
 
-    if (formFields2.name.trim() === "" || !formFields2.parentId) {
-      context.alertBox("error", "Fill in all fields for 3rd-level category");
-      setIsLoading((prev) => ({ ...prev, third: false }));
-      return;
-    }
+  if (formFields2.name.trim() === "" || !formFields2.parentId) {
+    context.alertBox("error", "Fill in all fields for 3rd-level category");
+    setIsLoading((prev) => ({ ...prev, third: false }));
+    return;
+  }
 
-    const payload = { ...formFields2, images: [] };
-    try {
-      const res = await postData("/api/category/create", payload);
-      if (res?.success) {
-        context.alertBox("success", "3rd-level category created!");
-        setFormFields2({ name: "", parentCatName: null, parentId: null });
-        setProductCat2("");
-        context.getCat();
-        navigate("/SubCategory/list"); // ← add this line
-      } else {
-        context.alertBox("error", res?.message);
-      }
-    } catch (err) {
-      console.error(err);
-      context.alertBox("error", "Server error");
-    } finally {
-      setIsLoading((prev) => ({ ...prev, third: false }));
+  const payload = { ...formFields2, images: [] };
+
+  try {
+    const res = await postData("/api/category/create", payload);
+
+    if (res?.success) {
+      context.alertBox("success", "3rd-level category created!");
+
+      // reset form
+      setFormFields2({ name: "", parentCatName: null, parentId: null });
+      setProductCat2("");
+
+      // ✅ WAIT for categories to refresh
+      await context.getCat();
+
+      // ✅ NAVIGATE AFTER DATA UPDATE
+      navigate("/Category/list", { replace: true });
+    } else {
+      context.alertBox("error", res?.message);
     }
-  };
+  } catch (err) {
+    console.error(err);
+    context.alertBox("error", "Server error");
+  } finally {
+    setIsLoading((prev) => ({ ...prev, third: false }));
+  }
+};
+
+
 
   return (
     <section className="p-5 bg-green-50 grid grid-cols-2 gap-4">
@@ -163,7 +173,8 @@ const AddSubCategory = () => {
 
         <input
           type="text"
-          name="name"
+          name="name" 
+
           value={formFields.name}
           onChange={onChangeInput}
           placeholder="Sub-category name"
