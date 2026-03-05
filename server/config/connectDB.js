@@ -9,7 +9,7 @@ async function connectDB() {
     await mongoose.connect(process.env.MONGO_URL);
 
     console.log("✅ MongoDB connected");
-    console.log("📦 Database name:", mongoose.connection.name);
+    // console.log("📦 Database name:", mongoose.connection.name);
   } catch (err) {
     console.error("❌ MongoDB connection failed:", err.message);
     process.exit(1);

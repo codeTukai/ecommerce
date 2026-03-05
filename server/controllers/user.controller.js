@@ -179,7 +179,7 @@ export async function loginUserController(request, response) {
       });
     }
 
-    // 🚫 Block unverified users
+    //  Block unverified users
     if (!user.verify_email) {
       return response.status(403).json({
         message: "Your email is not verified. Please verify it first.",
@@ -188,7 +188,7 @@ export async function loginUserController(request, response) {
       });
     }
 
-    // 🔐 Compare passwords
+    //  Compare passwords
     const isPasswordMatch = await bcryptjs.compare(password, user.password);
     if (!isPasswordMatch) {
       return response.status(400).json({
@@ -198,18 +198,18 @@ export async function loginUserController(request, response) {
       });
     }
 
-    // 🧾 Generate tokens
+    //  Generate tokens
     const accesstoken = await generatedAccessToken(user._id);
     const refreshToken = await generatedRefreshToken(user._id);
 
-    // 💾 Save tokens and login time
+    //  Save tokens and login time
     await UserModel.findByIdAndUpdate(user._id, {
       access_token: accesstoken,
       refresh_token: refreshToken,
       last_login_date: new Date(),
     });
 
-    // 🍪 Set cookies
+    //  Set cookies
     const cookieOptions = {
       httpOnly: true,
       secure: true,
@@ -254,11 +254,11 @@ export async function logoutController(request, response) {
       sameSite: "None",
     };
 
-    // ✅ Fixed function name: `clearCookie` (not `clearCookies`)
+    //  Fixed function name: `clearCookie` (not `clearCookies`)
     response.clearCookie("accessToken", cookiesOptions);
     response.clearCookie("refreshToken", cookiesOptions);
 
-    // ✅ Remove refresh_token from DB
+    //  Remove refresh_token from DB
     await UserModel.findByIdAndUpdate(userId, {
       refresh_token: "",
     });
@@ -346,7 +346,7 @@ export async function userAvatarController(request, response) {
 
     return response.status(200).json({
       _id: userId,
-      avatar: imagesArr[0], // ✅ fixed key
+      avatar: imagesArr[0], //  fixed key
       success: true,
     });
   } catch (error) {
@@ -439,14 +439,14 @@ export async function updateUserDetails(request, response) {
       verifyEmail = false;
     }
 
-    // 🔐 If password provided, hash it
+    //  If password provided, hash it
     let hashedPassword = userExist.password;
     if (password) {
       const salt = await bcryptjs.genSalt(10);
       hashedPassword = await bcryptjs.hash(password, salt);
     }
 
-    // 🔄 Update user
+    //  Update user
     const updatedUser = await UserModel.findByIdAndUpdate(
       userId,
       {
@@ -461,7 +461,7 @@ export async function updateUserDetails(request, response) {
       { new: true }
     );
 
-    // 📧 Send OTP email if email was updated
+    //  Send OTP email if email was updated
     if (verifyCode) {
       await sendEmailFun(
         newEmail,
