@@ -27,4 +27,4 @@ add e commerce.txt
 admin.zip
 server.zip
 project world.txt
-.env
+*.env
