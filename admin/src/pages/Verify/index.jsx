@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import OtpBox from "../../components/OtpBox";
+import {OtpBox} from '../../Components/OtpBox'
 import Button from "@mui/material/Button";
 import { postData } from "../../utils/api";
 import { useNavigate } from "react-router-dom";
